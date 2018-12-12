@@ -1,0 +1,892 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <xs:complexType abstract="true" name="LC_Base">
+      <xs:sequence>
+         <xs:element maxOccurs="1" minOccurs="1" name="name" type="xs:string"/>
+         <xs:element maxOccurs="1" minOccurs="0" name="description" type="xs:string"/>
+      </xs:sequence>
+      <xs:attribute name="uuid" type="xs:string" use="required"/>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="LC_List">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Base"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="LC_Container">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_List"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Legend" type="LC_Legend"/>
+   <xs:complexType name="LC_Legend">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="author" type="xs:string"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="LC_MixedClasses" type="LC_MixedClasses"/>
+               <xs:element maxOccurs="1" minOccurs="1" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="LC_LandCoverClass" type="LC_LandCoverClass"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+               <xs:element maxOccurs="1" minOccurs="0" name="views">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="LC_LandCoverClassView" type="LC_LandCoverClassView"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+            <xs:attribute name="lccs_sort" type="xs:boolean"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_MixedClasses" type="LC_MixedClasses"/>
+   <xs:complexType name="LC_MixedClasses">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="ShadowedMixedClasses" type="ShadowedMixedClasses"/>
+   <xs:complexType name="ShadowedMixedClasses">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="map_code" type="xs:string"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_LandCoverClass" type="LC_LandCoverClass"/>
+   <xs:complexType name="LC_LandCoverClass">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="map_code" type="xs:string"/>
+               <xs:element maxOccurs="1" minOccurs="1" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="LC_HorizontalPattern" type="LC_HorizontalPattern"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_HorizontalPattern" type="LC_HorizontalPattern"/>
+   <xs:complexType name="LC_HorizontalPattern">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="type" type="xs:string"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="cover" type="PercentageRange"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="occurance" type="PercentageRange"/>
+               <xs:element maxOccurs="1" minOccurs="1" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="LC_Stratum" type="LC_Stratum"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="PercentageRange">
+      <xs:attribute name="min">
+         <xs:simpleType>
+            <xs:restriction base="xs:decimal">
+               <xs:minInclusive value="0.0"/>
+               <xs:maxInclusive value="100.0"/>
+            </xs:restriction>
+         </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="max">
+         <xs:simpleType>
+            <xs:restriction base="xs:decimal">
+               <xs:minInclusive value="0.0"/>
+               <xs:maxInclusive value="100.0"/>
+            </xs:restriction>
+         </xs:simpleType>
+      </xs:attribute>
+   </xs:complexType>
+   <xs:element name="LC_Stratum" type="LC_Stratum"/>
+   <xs:complexType name="LC_Stratum">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="presence_type" type="VerticalPatternTypeEnum"/>
+               <xs:element maxOccurs="1" minOccurs="1" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="LC_LandCoverElement" type="LC_LandCoverElement"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+            <xs:attribute name="ontop" type="xs:string"/>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="VerticalPatternTypeEnum">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Mandatory"/>
+         <xs:enumeration value="Optional"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:complexType abstract="true" name="LC_LandCoverElement">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="presence_type" type="ElementPresenceTypeEnum"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="cover" type="PercentageRange"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="sequential_temporal_relationship_length_s_y">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+               <xs:element maxOccurs="1" minOccurs="0" name="sequential_temporal_relationship_length_o_y">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+               <xs:element maxOccurs="1" minOccurs="0" name="sequential_temporal_relationship_type" type="SeqTemporalRelationshipTypeEnum"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="LC_Characteristic" type="LC_ElementCharacteristic"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="ElementPresenceTypeEnum">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Mandatory"/>
+         <xs:enumeration value="Optional"/>
+         <xs:enumeration value="Exclusive"/>
+         <xs:enumeration value="Temporal Sequence Depending"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="SeqTemporalRelationshipTypeEnum">
+      <xs:restriction base="xs:string">
+         <xs:enumeration value="Sequential Same Year"/>
+         <xs:enumeration value="Sequential Other Year"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_Vegetation" type="LC_Vegetation"/>
+   <xs:complexType name="LC_Vegetation">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_LandCoverElement"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_GrowthForms" type="LC_GrowthForms"/>
+   <xs:complexType name="LC_GrowthForms">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Vegetation"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_HerbaceousGrowthForms" type="LC_HerbaceousGrowthForms"/>
+   <xs:complexType name="LC_HerbaceousGrowthForms">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_GrowthForms">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="LC_HerbaceousGrowthLeafPhenology" type="LC_HerbaceousGrowthLeafPhenology"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="height">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_HerbaceousGrowthLeafPhenology" type="LC_HerbaceousGrowthLeafPhenology"/>
+   <xs:complexType name="LC_HerbaceousGrowthLeafPhenology">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="LC_HerbaceousLeafPhenology" type="LC_HerbaceousLeafPhenology"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="LC_Characteristic">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="LC_Characteristic" type="LC_Characteristic"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="LC_ElementCharacteristic">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Characteristic"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_GrowthFormCharacteristic" type="LC_GrowthFormCharacteristic"/>
+   <xs:complexType name="LC_GrowthFormCharacteristic">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_ElementCharacteristic"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="LC_VegetationArtificiality">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_GrowthFormCharacteristic"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_CultivatedAndManagedVegetation" type="LC_CultivatedAndManagedVegetation"/>
+   <xs:complexType name="LC_CultivatedAndManagedVegetation">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_VegetationArtificiality"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="LC_WaterSupplyPeriod">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_CultivatedAndManagedVegetation">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="percentage" type="PercentageRange"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Irrigation" type="LC_Irrigation"/>
+   <xs:complexType name="LC_Irrigation">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WaterSupplyPeriod">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="irrigation_type" type="IrrigationTypeEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="IrrigationTypeEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Surface|Sprinkler|Drip"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_WoodyGrowthForms" type="LC_WoodyGrowthForms"/>
+   <xs:complexType name="LC_WoodyGrowthForms">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_GrowthForms">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="LC_WoodyGrowthLeafPhenology" type="LC_WoodyGrowthLeafPhenology"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="depth">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+               <xs:element maxOccurs="1" minOccurs="0" name="LC_WoodyGrowthLeafType" type="LC_WoodyGrowthLeafType"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_WoodyGrowthLeafPhenology" type="LC_WoodyGrowthLeafPhenology"/>
+   <xs:complexType name="LC_WoodyGrowthLeafPhenology">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="LC_WoodyLeafPhenology" type="LC_WoodyLeafPhenology"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="LC_Element">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Base"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_WoodyLeafPhenology" type="LC_WoodyLeafPhenology"/>
+   <xs:complexType name="LC_WoodyLeafPhenology">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Element">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="percentage" type="PercentageRange"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Evergreen" type="LC_Evergreen"/>
+   <xs:complexType name="LC_Evergreen">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WoodyLeafPhenology"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_WoodyGrowthLeafType" type="LC_WoodyGrowthLeafType"/>
+   <xs:complexType name="LC_WoodyGrowthLeafType">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Container">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="LC_WoodyLeafType" type="LC_WoodyLeafType"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_WoodyLeafType" type="LC_WoodyLeafType"/>
+   <xs:complexType name="LC_WoodyLeafType">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Element">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="percentage" type="PercentageRange"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Needleleaved" type="LC_Needleleaved"/>
+   <xs:complexType name="LC_Needleleaved">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WoodyLeafType"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Trees" type="LC_Trees"/>
+   <xs:complexType name="LC_Trees">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WoodyGrowthForms">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="height">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Plantation" type="LC_Plantation"/>
+   <xs:complexType name="LC_Plantation">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_CultivatedAndManagedVegetation"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_ForestPlantation" type="LC_ForestPlantation"/>
+   <xs:complexType name="LC_ForestPlantation">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Plantation"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Rainfed" type="LC_Rainfed"/>
+   <xs:complexType name="LC_Rainfed">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WaterSupplyPeriod"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_FloristicAspect" type="LC_FloristicAspect"/>
+   <xs:complexType name="LC_FloristicAspect">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_GrowthFormCharacteristic"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_NameAttributionCriteria" type="LC_NameAttributionCriteria"/>
+   <xs:complexType name="LC_NameAttributionCriteria">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_ElementCharacteristic"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_SinglePlantSpecies" type="LC_SinglePlantSpecies"/>
+   <xs:complexType name="LC_SinglePlantSpecies">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_NameAttributionCriteria">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="type" type="SinglePlantSpeciesTypeEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="SinglePlantSpeciesTypeEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Dominant|Most Frequent"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_FloristicAspectSpecies" type="LC_FloristicAspectSpecies"/>
+   <xs:complexType name="LC_FloristicAspectSpecies">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Characteristic">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="1" name="species_name" type="SpeciesNamesEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="SpeciesNamesEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Food Crops|Non-food Crops|Cereals|Roots and Tubers|Pulses and Vegetables|Fruits and Nuts|Fodder|Beverages/Stimulants|Industrial Crops|Wood Timber|Biological Filtration|Amaranthus|Barley|Chenopodium|Fagopyrum|Maize|Millet|Oats|Rice|Rye|Sorghum|Wheat|Cassava|Potato|Sweet Potato|Yam|Asparagus|Beans Phaseolus|Beans Vigna|Cabbages|Carrot|Chickpea|Cucumbers|Lentil|Lettuce|Melons|Onion|Pea|Pumpkins|Tomatoes|Almond|Apple|Avocado|Banana|Cashew|Citrus Fruits|Coconut|Date Palm|Fig|Grapes|Groundnut|Guava|Hazelnut|Macadamia|Mango|Papaya|Peach|Pear|Pineapple|Pistacio|Plum|Fodder Grasses|Fodder Pulses|Water Hyacinth|Cocoa|Coffee|Hops|Tea|Tobacco|Castor|Cotton|Hevea|Hemp Cannabis|Hemp Crotolaria|Jute|Oil Palm|Olive|Safflower|Sesame|Sisal|Soybean|Acacia|Eucalypt|Pine|Popular|Teak|Bulrush|Duckweed|Giant Reed"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_Broadleaved" type="LC_Broadleaved"/>
+   <xs:complexType name="LC_Broadleaved">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WoodyLeafType">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="arrangement" type="BroadleavedArrangementsEnum"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="shape" type="BroadleavedShapesEnum"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="venation" type="BroadleavedVenationsEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="BroadleavedArrangementsEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Helical (Top View)|Alternate|Opposite|Whorled"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="BroadleavedShapesEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Linear|Lanceolate|Oblanceolate|Spatulate|Ovate|Obovate|Ecliptic|Oblong|Reniform|Orbicolar|Pectate|Perfoliate|Connate"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="BroadleavedVenationsEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Dichotomous|Pinnate Reticulate|Palmate Reticulate|Parallel (expanded leaf)|Parallel (linear leaf)"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_OrchardAndOtherPlantation" type="LC_OrchardAndOtherPlantation"/>
+   <xs:complexType name="LC_OrchardAndOtherPlantation">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Plantation"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Shrubs" type="LC_Shrubs"/>
+   <xs:complexType name="LC_Shrubs">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WoodyGrowthForms">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="height">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_NaturalOrSeminaturalVegetation" type="LC_NaturalOrSeminaturalVegetation"/>
+   <xs:complexType name="LC_NaturalOrSeminaturalVegetation">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_VegetationArtificiality"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Graminae" type="LC_Graminae"/>
+   <xs:complexType name="LC_Graminae">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_HerbaceousGrowthForms"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_AbioticSurface" type="LC_AbioticSurface"/>
+   <xs:complexType name="LC_AbioticSurface">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_LandCoverElement"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_NaturalSurface" type="LC_NaturalSurface"/>
+   <xs:complexType name="LC_NaturalSurface">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_AbioticSurface"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_UnconsolidatedSurface" type="LC_UnconsolidatedSurface"/>
+   <xs:complexType name="LC_UnconsolidatedSurface">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_NaturalSurface"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_LooseAndShiftingSand" type="LC_LooseAndShiftingSand"/>
+   <xs:complexType name="LC_LooseAndShiftingSand">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_UnconsolidatedSurface"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Dune" type="LC_Dune"/>
+   <xs:complexType name="LC_Dune">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_LooseAndShiftingSand">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="type" type="DuneTypesEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="DuneTypesEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Barchan|Parabolic|Longitudinal"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_Forbs" type="LC_Forbs"/>
+   <xs:complexType name="LC_Forbs">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_HerbaceousGrowthForms">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="status" type="ForbsStatusEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="ForbsStatusEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Floating|Terrestrial"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_ConsolidatedSurface" type="LC_ConsolidatedSurface"/>
+   <xs:complexType name="LC_ConsolidatedSurface">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_NaturalSurface"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract="true" name="LC_HerbaceousLeafPhenology">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_Element">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="percentage" type="PercentageRange"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Annual" type="LC_Annual"/>
+   <xs:complexType name="LC_Annual">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_HerbaceousLeafPhenology"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Beach" type="LC_Beach"/>
+   <xs:complexType name="LC_Beach">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_LooseAndShiftingSand">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="type" type="BeachTypesEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="BeachTypesEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Sand|Gravels"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_WaterBodyAndAssociatedSurface" type="LC_WaterBodyAndAssociatedSurface"/>
+   <xs:complexType name="LC_WaterBodyAndAssociatedSurface">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_AbioticSurface">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="height">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+               <xs:element maxOccurs="1" minOccurs="0" name="depth">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+               <xs:element maxOccurs="1" minOccurs="0" name="seasonal_variation_persistence">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:integer"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:integer"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_WaterBody" type="LC_WaterBody"/>
+   <xs:complexType name="LC_WaterBody">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WaterBodyAndAssociatedSurface">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="daily_variation_type" type="WaterBodyDailyVariationTypeEnum"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="daily_variation_persistence">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:integer"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:integer"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+               <xs:element maxOccurs="1" minOccurs="0" name="dynamics" type="WaterBodyDynamicsEnum"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="position" type="WaterBodyPositionsEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="WaterBodyDailyVariationTypeEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Tidal related"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="WaterBodyDynamicsEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Flowing|Standing"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="WaterBodyPositionsEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Above Surface|Below Surface"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_WaterAndAssociatedSurfacesCharacteristic" type="LC_WaterAndAssociatedSurfacesCharacteristic"/>
+   <xs:complexType name="LC_WaterAndAssociatedSurfacesCharacteristic">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_ElementCharacteristic"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_WaterSalinity" type="LC_WaterSalinity"/>
+   <xs:complexType name="LC_WaterSalinity">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WaterAndAssociatedSurfacesCharacteristic">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="type" type="WaterSalinityTypesEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="WaterSalinityTypesEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Fresh|Brackish|Saline|Brine"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_Aphillous" type="LC_Aphillous"/>
+   <xs:complexType name="LC_Aphillous">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_WoodyLeafType"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Perennial" type="LC_Perennial"/>
+   <xs:complexType name="LC_Perennial">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_HerbaceousLeafPhenology"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_ArtificialSurface" type="LC_ArtificialSurface"/>
+   <xs:complexType name="LC_ArtificialSurface">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_AbioticSurface">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="depth">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_BuiltUpSurface" type="LC_BuiltUpSurface"/>
+   <xs:complexType name="LC_BuiltUpSurface">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_ArtificialSurface"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_LinearSurface" type="LC_LinearSurface"/>
+   <xs:complexType name="LC_LinearSurface">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_BuiltUpSurface"/>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:element name="LC_Road" type="LC_Road"/>
+   <xs:complexType name="LC_Road">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_LinearSurface">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="type" type="RoadTypesEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="RoadTypesEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Dual Carriage Way|Single Carriage Way|Unpaved"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_NonLinearSurface" type="LC_NonLinearSurface"/>
+   <xs:complexType name="LC_NonLinearSurface">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_BuiltUpSurface">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="construction_material" type="ConstructionMaterialsEnum"/>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="ConstructionMaterialsEnum">
+      <xs:restriction base="xs:string">
+         <xs:whiteSpace value="replace"/>
+         <xs:pattern value=".*|Hard Material|Light Material"/>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:element name="LC_Building" type="LC_Building"/>
+   <xs:complexType name="LC_Building">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_NonLinearSurface">
+            <xs:sequence>
+               <xs:element maxOccurs="1" minOccurs="0" name="height">
+                  <xs:complexType>
+                     <xs:attribute name="min">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                     <xs:attribute name="max">
+                        <xs:simpleType>
+                           <xs:restriction base="xs:decimal"/>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name="LC_LandCoverClassView">
+      <xs:complexContent mixed="false">
+         <xs:extension base="LC_List">
+            <xs:sequence>
+               <xs:element maxOccurs="unbounded" minOccurs="0" name="LC_LandCoverClassView" type="LC_LandCoverClassView"/>
+               <xs:element maxOccurs="1" minOccurs="0" name="elements">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="LC_LandCoverClass" type="xs:string"/>
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+</xs:schema>

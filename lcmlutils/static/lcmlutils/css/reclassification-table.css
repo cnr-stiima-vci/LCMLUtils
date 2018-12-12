@@ -1,0 +1,21 @@
+th.rotate {
+	height: 30px;
+	white-space: nowrap;
+}
+/*
+th.rotate > div {
+	transform: 
+		translate(15px, 0px)
+		rotate(315deg);
+	width:30px;
+}
+*/
+th.rotate > div > span {
+	border-bottom: 1px solid #ccc;
+	padding: 5px 10px;
+}
+
+tr > td > div > label.active {
+	font-weight: bold;
+	font-style: oblique;
+}

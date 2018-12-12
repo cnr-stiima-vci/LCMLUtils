@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+    {% block head %}
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+      <link href="{{ STATIC_URL }}lcmlutils/css/services_page.css" rel="stylesheet"/>
+      
+      <style type="text/css">[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}</style>
+      {% block extra_head %}
+      {% endblock %}
+    {% endblock %}
+  </head>
+
+  <body class="{% block body_class %}{% endblock %}">
+    {% block header %}
+    {% endblock header %}
+
+    <section id="gd-wrapper">
+    {% block middle %}
+    {% endblock middle %}
+    </section>
+
+    {% block footer %}
+    <footer id="gd-footer">
+        <div class="container">
+            <div class="row">
+            </div>
+        </div>
+      </div>
+    </footer>
+    {% endblock footer %}
+
+
+    
+
+    {% block extra_script %}
+    <!--<script src="{{ STATIC_URL }}lib/js/bootstrap.min.js?v={{ VERSION }}"></script>-->
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    {% endblock extra_script %}
+
+    
+    
+  </body>
+</html>
+

@@ -1,0 +1,8 @@
+.classgraphlink {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+}
+.classgraphlink.warning{
+    stroke: orange;
+}     

@@ -1,0 +1,752 @@
+{% extends "lcmlutils/site_base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load lcmlutils_extras %}
+{% load url from future %}
+
+{% block title %} {% trans "LCMLUtils sample page" %} - {{ block.super }} {% endblock %}
+
+{% block body_class %}layers explore{% endblock %}
+{% block middle %}
+
+
+<div class="container">
+  <div class="row">
+    <hr class="hr-primary" />
+    <div class="col-sm-2">
+      Available validators:
+    </div>
+    <div class="col-sm-10">
+      {% get_validators %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="container">
+      <hr class="hr-primary" />
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#basic-elements-list-panel">List Basic Elements</a></li>
+        <li><a data-toggle="tab" href="#derived-classes-list-panel">List Derived Classes</a></li>
+        <li><a data-toggle="tab" href="#basic-element-schema-panel">Basic Element Schema</a></li>
+        <li><a data-toggle="tab" href="#class-graph-panel">Class graph view</a></li>
+        <li><a data-toggle="tab" href="#similarity-assessment-panel">Similarity Assessment</a></li>
+      </ul>
+      <div class="tab-content">
+        <div id="basic-elements-list-panel" class="tab-pane fade in active">
+          <div class="table-responsive">          
+            <table class="table" id="basic-elements-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Eligible as root for queries/class entries</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="derived-classes-list-panel" class="tab-pane fade">
+          <div class="row">
+            <div class="col-sm-2">
+              Base class:
+            </div>
+            <div class="col-sm-10">
+              <select id="base-classes-combo-list" class="basic-elements-list">
+              </select>
+            </div>
+          </div>
+          <div class="table-responsive">          
+            <table class="table" id="derived-elements-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div id="basic-element-schema-panel" class="tab-pane fade">
+          <div class="row">
+            <div class="col-md-2">
+              Basic Element:
+            </div>
+            <div class="col-md-10">
+              <select id="basic-elements-list" class="basic-elements-list">
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1">
+              Properties:
+            </div>
+          </div>
+          <div class="table-responsive">          
+            <table class="table" id="basic-element-schema-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Attributes</th>
+                  <th>Additional Info</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              Characteristics chosen from:
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12" id="characteristics-text-list">
+            </div>
+          </div>
+        </div>
+        <div id="class-graph-panel" class="tab-pane fade">
+          <h3>Class graph</h3>
+          <div class="row">
+            <div class="col-md-2">
+              Available Legends:
+            </div>
+            <div class="col-md-4">
+              <select id="legends-combo-list" class="legends-combo-list">
+              </select>
+            </div>
+            <div class="col-md-2">
+              Available legend classes:
+            </div>
+            <div class="col-md-4">
+              <select id="lc-combo-list" class="lc-combo-list">
+              </select>
+            </div>
+          </div>
+          <div id="chart_div_full" class="col-md-12"></div>
+        </div>
+        <div id="similarity-assessment-panel" class="tab-pane fade">
+          <div class="row">
+            <div class="col-md-1">
+              Reference legend:
+            </div>
+            <div class="col-md-2">
+              <select id="ref-legend-combo-list" class="legends-combo-list">
+              </select>
+            </div>
+            <div class="col-md-1">
+              Query legend:
+            </div>
+            <div class="col-md-2">
+              <select id="query-legend-combo-list" class="legends-combo-list">
+              </select>
+            </div>
+            <div class="col-md-1">
+              Similarity threshold
+            </div>
+            <div class="col-md-1">
+              <input id="similarity-threshold" type="number" value="50" placeholder="0 to 100" step="5" min="5" max="100">
+            </div>
+            <div class="col-md-2">
+              <button type="button" id="query-btn" class="btn btn-primary">Query/Remap...</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <table id="LCML-reclassification-table" class="table-striped">
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<link rel="stylesheet" href="{{ STATIC_URL }}lcmlutils/css/classgraph.css">
+
+<link rel="stylesheet" href="{{ STATIC_URL }}lcmlutils/css/reclassification-table.css">
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<!-- <script src="//code.jquery.com/jquery-1.11.1.min.js"></script> -->
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="{{ STATIC_URL }}lcmlutils/js/class-diagram/class-diagram.js"></script>
+<script src="{{ STATIC_URL }}lcmlutils/js/class-diagram/class-graph.js"></script>
+<script src="{{ STATIC_URL }}lcmlutils/js/class-diagram/multiline-text.js"></script>
+<script src="{{ STATIC_URL }}lcmlutils/js/lccs3_class_diagram.js"></script>
+
+<script type="text/javascript">
+  var current_legend_xml = null;
+  var lc_classes_color_map = {};
+  var base_classes_dd = {
+      "LC_Vegetation": { "color":"green"},
+      "LC_AbioticSurface": { "color":"orange"},
+      "LC_ArtificialSurface": { "color":"pink"},
+      "LC_NaturalSurface": { "color": "brown"},
+      "LC_WaterBodyAndAssociatedSurface": { "color": "cyan"}
+  };
+  function derel_url(lc_base_name)
+  {
+      return "/services/derived-classes-list/"+lc_base_name;
+  }
+  /*
+  function bind_lc_classes_to_color_map()
+  {
+      var lc_classes_color_map = [];
+      var deferreds = [];
+      debugger;
+      var idx = 0;
+      var base_classes_keys = Object.keys(base_classes_dd);
+      var deferreds_count = base_classes_keys.length;
+      for(idx=0;idx<deferreds_count;idx++)
+      {
+          var url = derel_url(base_classes_keys[idx]);
+          deferreds.push(
+              $.ajax(url, 
+              {
+                  base_class_name: base_classes_keys[idx],
+                  color: base_classes_dd[base_classes_keys[idx]]["color"],
+                  success: function(data, textStats, jqXHR) {
+                      console.log(data);
+                      var idx = 0;
+                      var total = data.objects.length;
+                      for (idx=0;idx<total;idx++) {
+                          var name = data.objects[idx];
+                          if (!(name in lc_classes_color_map))
+                              lc_classes_color_map[name] = {"lists":[]};
+                          lc_classes_color_map[name]["lists"].push({
+                              "base_class": this.base_class_name,
+                              "count": total,
+                              "color": this.color
+                          });
+                      }
+                  }
+              })
+          );
+      };
+      $.when.apply(null, deferreds).done(function() {
+          debugger;
+          console.log("bind_lc_classes_to_color_map completed!" );
+          console.log(lc_classes_color_map);
+          var beltypes = Object.keys(lc_classes_color_map);
+          var count = beltypes.length;
+          var idx = 0;
+          for (idx = 0; idx < count; idx++)
+          {
+              var lists = lc_classes_color_map[beltypes[idx]]["lists"];
+              var el = lists.reduce(function(prev, curr) {
+                  return prev.count < curr.count ? prev : curr;
+              });
+              lc_classes_color_map[beltypes[idx]].color = el.color;
+          }
+          console.log(lc_classes_color_map);
+      }).then(function() {
+        console.log("All completed!");
+      });
+  };
+  */
+  function updateBasicElementsList(data) {
+    var tbody = $("#basic-elements-table tbody");
+    var combo = $(".basic-elements-list");
+    console.log(data);
+    var entries = data["objects"];
+    var cnt = entries.length;
+    var vv = [];
+    for (var idx=0; idx<entries.length; idx++)
+    {
+      var name = entries[idx]["name"];
+      var as_root = entries[idx]["eligible_as_root"];
+      var cb = $('<input>').attr('type','checkbox').addClass('checkthis');
+      if (as_root)
+        cb = cb.attr('checked','checked');
+      tbody.append($('<tr>')
+          .append($('<td>').addClass('col-md-1').text(idx+1))
+          .append($('<td>').addClass('col-md-5').text(name))
+            .append($('<td>').addClass('col-md-1')
+                .append(cb)
+            )
+      );
+      vv.push(name);
+    }
+    vv.sort();
+    for (var idx = 0; idx < vv.length; idx++)
+      combo.append($('<option>').attr('value',name).text(vv[idx]));
+  };
+  function updateDerivedClassesList(data) {
+    var tbody = $("#derived-elements-table tbody");
+    tbody.empty();
+    console.log(data);
+    var entries = data["objects"];
+    var cnt = entries.length;
+    for (var idx=0; idx<entries.length; idx++)
+    {
+      var name = entries[idx];
+      tbody.append($('<tr>')
+          .append($('<td>').addClass('col-md-12').text(name))
+      );
+    }
+  };
+  function updateBasicElementSchema(data) {
+    var ct = null;
+    var tbody = $("#basic-element-schema-table tbody");
+    tbody.empty();
+    console.log(data);
+    var entries = data["schema"];
+    var cnt = entries.length;
+    for (var idx=0; idx<entries.length; idx++)
+    {
+      var name = entries[idx]["name"];
+      var et = entries[idx]["type"];
+      // attributes
+      var attr_dict = entries[idx]["attributes"];
+      var attr_descriptions = [];
+      if (attr_dict)
+        Object.keys(attr_dict).forEach(function(key) {
+          console.log(key, attr_dict[key]);
+          var str = key;
+          if ("type" in attr_dict[key])
+            str = str + ": "+attr_dict[key]["type"];
+          attr_descriptions.push(str);
+        });
+      var attrs_descr = attr_descriptions.join(", ");
+      // type
+      var et_el = null;
+      var et_add_el = null;
+      if (et == "list")
+      {
+        et = et + " of characteristics " ;
+        et_add_el = $('<a>').addClass("browse-class")
+                            .attr('href',"#")
+                            .text(entries[idx]["items"]);
+        if (name=="elements")
+          ct = entries[idx]["items"];
+      }
+      if (et == "dict")
+      {
+        var descr = [];
+        for (var sidx in entries[idx]["schema"])
+          descr.push(entries[idx]["schema"][sidx]["name"]);
+        dict_descr = descr.join(", ");
+        var replacement = ' and';
+        dict_descr = dict_descr.replace(/,([^,]*)$/,replacement+'$1'); //a_b!c
+        et = et + " of " + dict_descr;
+      }
+      if (!et)
+      {
+        et = "";
+      }
+      et_el = $('<td>').addClass('col-md-4').text(et);
+      if (et_add_el)
+        et_el.append(et_add_el);
+      // additional info
+      var additional_str = "";
+      if ("allowed" in entries[idx])
+        additional_str = "allowed: "+entries[idx]["allowed"].join("|");
+      if ("regex" in entries[idx])
+        additional_str = "regex: "+entries[idx]["regex"];
+      // fill row
+      tbody.append($('<tr>')
+          .append($('<td>').addClass('col-md-1').text(name))
+          .append(et_el)
+          .append($('<td>').addClass('col-md-4').text(attrs_descr))
+          .append($('<td>').addClass('col-md-4').text(additional_str))
+      );
+      /*
+      .append($('<td>').addClass('col-md-4').text(et)
+            .append($('<a href="#">').text("bbb")))
+          
+      */
+    }
+    return ct;
+  };
+  function browseClassSchema(str) {
+    var combo = $( "#basic-elements-list" );
+    combo.val(str);
+    $.ajax({
+      url: '/services/basic-element-schema/'+str,
+      type: 'GET',
+      success: function(data) {
+        updateBasicElementSchema(data);
+        console.log(data);
+        //alert('list-basic-elements ok');
+      }
+    });
+  };
+  function showLCCS3ClassGraph(objXml) {
+    var div_elem = "chart_div_full";
+    var config = {"classes": [], "connectors_meta": [], "classcolor":{}};
+    lc_classes_color_map = {};
+    // reconstruct colormap THEN create the diagram
+    var lc_classes_color_map = [];
+    var deferreds = [];
+    var idx = 0;
+    var base_classes_keys = Object.keys(base_classes_dd);
+    var deferreds_count = base_classes_keys.length;
+    for(idx=0;idx<deferreds_count;idx++)
+    {
+        var url = derel_url(base_classes_keys[idx]);
+        deferreds.push(
+            $.ajax(url, 
+            {
+                base_class_name: base_classes_keys[idx],
+                color: base_classes_dd[base_classes_keys[idx]]["color"],
+                success: function(data, textStats, jqXHR) {
+                    console.log(data);
+                    var idx = 0;
+                    var total = data.objects.length;
+                    for (idx=0;idx<total;idx++) {
+                        var name = data.objects[idx];
+                        if (!(name in lc_classes_color_map))
+                            lc_classes_color_map[name] = {"lists":[]};
+                        lc_classes_color_map[name]["lists"].push({
+                            "base_class": this.base_class_name,
+                            "count": total,
+                            "color": this.color
+                        });
+                    }
+                }
+            })
+        );
+    };
+    $.when.apply(null, deferreds).done(function() {
+        console.log("bind_lc_classes_to_color_map completed!" );
+        console.log(lc_classes_color_map);
+        var beltypes = Object.keys(lc_classes_color_map);
+        var count = beltypes.length;
+        var idx = 0;
+        for (idx = 0; idx < count; idx++)
+        {
+            var lists = lc_classes_color_map[beltypes[idx]]["lists"];
+            var el = lists.reduce(function(prev, curr) {
+                return prev.count < curr.count ? prev : curr;
+            });
+            lc_classes_color_map[beltypes[idx]].color = el.color;
+        }
+        console.log(lc_classes_color_map);
+    }).then(function() {
+      console.log("All completed, proceeding with class graph creation...");
+      //config = extract_diagram(config, objXml);
+      nested_config = {};
+      additional_info = {"colormap": lc_classes_color_map, "level":0};
+      var cfg = extract_nested_diagram(nested_config, objXml, null, null, additional_info);
+      //cfg["classcolor"] = getColorForLandCoverClass(lc_classes_color_map, cfg["basic_element"]);
+      //debugger;
+      $("#"+div_elem).children().remove();
+      d3.classGraph.initialize(div_elem, cfg);
+    });
+  }
+  function updateLegendClassesList(data) {
+    var lc_combo = $("#lc-combo-list");
+    lc_combo.empty();
+
+    var parser = new DOMParser();
+    var text = data["xml_text"];
+    var xmlDoc = parser.parseFromString(text,"text/xml");
+    current_legend_xml = xmlDoc;
+    var lc_classes = xmlDoc.getElementsByTagName('LC_LandCoverClass');
+    for (var idx=0; idx<lc_classes.length; idx++)
+    {
+      if (lc_classes[idx].querySelectorAll('name').length>0)
+      {
+        var name = lc_classes[idx].querySelectorAll('name')[0].textContent;
+        var map_code = lc_classes[idx].querySelectorAll('map_code')[0].textContent;
+        var uuid = lc_classes[idx].getAttribute('uuid');
+        lc_combo.append($('<option>').attr('value',uuid).text(name));
+      }
+    }
+    //debugger;
+    if (lc_classes.length>0) {
+      showLCCS3ClassGraph(lc_classes[0]);
+    }
+  }
+  function retrieveLegendClassesForID(legend_id) {
+    $.ajax({
+        url: '/rest/legends/'+(legend_id||1)+"/?format=json",
+        type: 'GET',
+        success: function(legend_data) {
+          console.log(legend_data);
+          updateLegendClassesList(legend_data);
+        }
+      });
+  }
+  function updateLegendsList(data) {
+    var combo = $(".legends-combo-list");
+    combo.empty();
+    for (var idx = 0; idx < data.length; idx++)
+      combo.append($('<option>').attr('value',data[idx]["id"]).text(data[idx]["name"]));
+    if (data.length>0)
+      retrieveLegendClassesForID(data[0]["id"]);
+  }
+  function getTextWidth(text, font) {
+      var canvas = getTextWidth.canvas || (getTextWidth.canvas=document.createElement("canvas"));
+      var context = canvas.getContext("2d");
+      context.font = font;
+      var metrics = context.measureText(text);
+      return metrics.width;
+  }
+  function getMtxCellId(row_id, col_id) {
+    return ('#'+row_id+'-'+col_id);
+  }
+  function showReclassificationTable(the_table, scores, query_classes, additional_params) {
+      if (additional_params===undefined)
+          additional_params = {similarity_threshold:50};
+      var tt = the_table;
+      //var tt = $('#LCML-reclassification-table');
+      var table_rows = Object.keys(scores);
+      var table_columns = query_classes;
+      var computed_width_columns = [];
+
+      for (var idx = 0; idx <table_columns.length; idx++)
+          computed_width_columns.push(getTextWidth(table_columns[idx],'normal 14pt arial'));
+      var max_computed_width = Math.max.apply(null, computed_width_columns);
+      var newh = Math.round(max_computed_width)+25;
+      //$('th.rotate').css({'height':newh+'px'});
+      var transform_str = 'translate(15px, 0px) rotate(270deg)';//(newh+25)+'
+      tt.find('thead').remove();
+      tt.prepend('<thead></thead>');
+      tt.find('thead').append('<th></th>');
+      table_columns.forEach( function(value, index, arr) {
+          //debugger;
+          var pt = "padding-top:"+Math.round(computed_width_columns[index])+"px;";
+          this.thead.append('<th class="rotate" style="'+pt+'height:30px;white-space:nowrap;"><div style="transform:translate(15px,0px) rotate(270deg);width:30px;"><span>'+value+'</span></div></th>');
+      }, {'thead':tt.find('thead')});
+      var pt = "padding-top:"+Math.round(max_computed_width)+"px;";
+      tt.find('thead').append('<th class="rotate" style="'+pt+'height:30px;white-space:nowrap;"><div style="transform:translate(15px,0px) rotate(270deg);width:30px;"><span>'+'N/A'+'</span></div></th>');
+      //$('th.rotate').css('height',(newh+5)+'px');
+      $('th.rotate > div').css('transform',transform_str);
+      tt.find('tbody').remove();
+      tt.append('<tbody></tbody>');
+      table_rows.forEach( function(value, index, arr) {
+          var scores = this.scores;
+          var scores_row = scores[value];
+          var not_in_layer_arr = this.not_in_layer || [];
+          var is_in_layer = (not_in_layer_arr.indexOf(value)==-1);
+          console.log(scores_row);
+          var scores_ll = [];
+          for (var idx=0;idx<this.columns.length;idx++)
+              scores_ll.push(scores_row[this.columns[idx]]);
+          //this.tbody.append('<tr></tr>');
+          //var current_row = this.tbody.find('tr').last();
+          //current_row.append('<td>'+value+'</td>');
+          var max_assigned = false;
+          var grey_count = 0;
+          var rgv = 'radio-group-'+value;
+          /* 
+          var div_with_scores = $('<div>')
+                                  .addClass('btn-group')
+                                  .attr('data-toggle','buttons-radio')
+                                  .attr('id',rgv);
+          */
+          if (is_in_layer) 
+          {
+              var div_with_scores = $('<div>')
+                                      .addClass('btn-group')
+                                      .attr('data-toggle','buttons');
+              for(var idx = 0; idx < this.columns.length+1; idx++) {
+                  var col_id = null;
+                  var v = null;
+                  var vdec = null;
+                  if (idx<this.columns.length)
+                  {
+                      col_id = this.columns[idx];
+                      v = scores_row[col_id];
+                      vdec = parseFloat(Math.round(v*100)/100).toFixed(0);
+                  }
+                  else
+                  {
+                      col_id='n/a';
+                  }
+                  var crow_style = 'text-align:right;';
+                  var is_max = Math.max.apply(null, scores_ll)==v;
+                  var is_active = false;
+                  if (is_max && max_assigned==false && v>=this.score_threshold) {
+                      crow_style = crow_style+'color:darkgreen;';
+                      max_assigned = true;
+                      is_active = true;
+                  }
+                  if (v<this.score_threshold) {
+                      crow_style = crow_style+'color:lightgrey';
+                      grey_count = grey_count+1;
+                  }
+                  //current_row.append('<td style="'+crow_style+'">'+vdec+'</td>');
+                  /*
+                  var score_ahref = $('<a>').addClass('btn').addClass('radio-option').attr('href','#'+rgv+'-'+col_id).attr('data-toggle',rgv).text(vdec+'%');
+                  if (is_active)
+                      score_ahref.addClass('active');
+                  div_with_scores.append(score_ahref); 
+                  */
+                  var score_text = null;
+                  if (idx==this.columns.length)
+                      score_text = 'N/A';
+                  else
+                      score_text = vdec+'%';
+                  var score_label = $('<label>')
+                                      .addClass('btn')
+                                      .text(score_text)
+                                      .width('50px')
+                                      .append($('<input>')
+                                                  .attr('type','radio')
+                                                  .attr('name', rgv)
+                                                  .attr('id', getMtxCellId(value, col_id))
+                                                  .addClass('remap-radio-btn')
+                                                  
+                                      );
+                  if (idx==this.columns.length && max_assigned===false)
+                      is_active = true;
+                  if (is_active)
+                      score_label.addClass('active');     
+                  div_with_scores.append(score_label);
+              }
+              var td_with_scores = $('<td>')
+                                      .attr('colspan',this.columns.length+1)
+                                      .append(div_with_scores);
+              var newtr = $('<tr>')
+                              .append($('<td>').text(value))
+                              .append(td_with_scores);
+              this.tbody.append(newtr);
+          }
+          
+          //console.log(newtr[0]);
+      }, {
+          'tbody':tt.find('tbody'),
+          'columns':table_columns,
+          'scores':scores,
+          'score_threshold':additional_params.similarity_threshold,
+          'not_in_layer':additional_params.not_in_layer
+      });
+  };
+  $("#query-btn").click(function() {
+    debugger;
+    var url = "{% url 'similarity-assessment' %}";
+    var wln = $("#ref-legend-combo-list option:selected").text();
+    var qln = $("#query-legend-combo-list option:selected").text();
+    var similarity_threshold = parseInt($('#similarity-threshold').val());
+    var json_config = 
+      {
+        "similarity_mode":"FULL_PROTOTYPE", 
+        "similarity_threshold": similarity_threshold, 
+        "preview_mode":true,
+        "working_legend_name": wln,
+        "query_legend_name": qln
+      };
+    $.ajax(
+    {
+        url: url,
+        data: JSON.stringify(json_config),
+        contentType: 'application/json',
+        additional_params: json_config,
+        error: function() {
+            alert('ERROR ');
+        },
+        success: function(data) {
+            //$('#lccs3-reclassification-table-dlg').dialog();
+          var tt = $('#LCML-reclassification-table');
+          var columns = data["query_classes"];
+          debugger;
+          reference_class_names = Object.keys(data.scores);
+          showReclassificationTable(tt, data.scores, columns, this.additional_params); 
+        },
+        type: 'POST'
+    });
+  });
+  $( "#legends-combo-list" ).change(function() {
+    var legend_id = $("#legends-combo-list").val();
+    retrieveLegendClassesForID(legend_id);
+  });
+  // handlers
+  $("#basic-element-schema-table").on("click", "a", function(event){
+    //debugger;
+    var class_name = event.currentTarget.innerHTML;
+    event.preventDefault();
+    browseClassSchema(class_name);
+  });
+  $( "#base-classes-combo-list" ).change(function() {
+    var str = "";
+    $( "#base-classes-combo-list option:selected" ).each(function() {
+      str += $( this ).text() + " ";
+    });
+    $.ajax({
+      url: '/services/derived-classes-list/'+str,
+      type: 'GET',
+      success: function(data) {
+        updateDerivedClassesList(data);
+        console.log(data);
+        //alert('list-basic-elements ok');
+      }
+    });
+  });
+  $( "#basic-elements-list" ).change(function() {
+    var str = "";
+    $( "#basic-elements-list option:selected" ).each(function() {
+      str += $( this ).text() + " ";
+    });
+    $.ajax({
+      url: '/services/basic-element-schema/'+str,
+      type: 'GET',
+      success: function(data) {
+        var characteristics_type = updateBasicElementSchema(data);
+        console.log(data);
+        if (characteristics_type)
+        {
+          $.ajax({
+              url: '/services/derived-classes-list/'+characteristics_type,
+              type: 'GET',
+              success: function(characteristics_data) {
+                var objects = characteristics_data["objects"];
+                var ctext = objects.join(", ");
+                $("#characteristics-text-list").text(ctext);
+            }
+          }) 
+        }
+        //alert('list-basic-elements ok');
+      }
+    });
+  });
+  $( "#lc-combo-list" ).change(function() {
+    var str = "";
+    $( "#lc-combo-list option:selected" ).each(function() {
+      str += $( this ).val() + " ";
+    });
+    str = str.substring(0, str.length - 1);
+    myXML = $(current_legend_xml).find("LC_LandCoverClass").filter(function() {return $(this).attr("uuid")==str});
+    if (myXML.length>0)
+    {
+      showLCCS3ClassGraph(myXML[0]);
+    }
+  });      
+  $(document).ready(function() {
+    $.ajax({
+      url: '/services/list-basic-elements',
+      type: 'GET',
+      success: function(data) {
+        updateBasicElementsList(data);
+        //alert('list-basic-elements ok');
+      }
+    });
+    $.ajax({
+      url: '/rest/legends/?format=json',
+      type: 'GET',
+      success: function(data) {
+        updateLegendsList(data);
+        //alert('list-basic-elements ok');
+      }
+    });
+  });
+</script>
+{% endblock extra_script %}
+
+
