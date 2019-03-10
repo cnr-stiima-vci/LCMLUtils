@@ -16,19 +16,26 @@
     <div class="col-sm-2">
       Available validators:
     </div>
-    <div class="col-sm-10">
+    <div class="col-sm-8">
       {% get_validators %}
+    </div>
+    <div class="col-sm-2">
+        <div class="pull-right">
+            <button type="button" id="lcmlutils-tour-btn" class="btn btn-default btn-lg">
+                  <span class="glyphicon plyphicon-play">Start the tour</span>
+            </button>
+        </div>
     </div>
   </div>
   <div class="row">
     <div class="container">
       <hr class="hr-primary" />
       <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#basic-elements-list-panel">List Basic Elements</a></li>
-        <li><a data-toggle="tab" href="#derived-classes-list-panel">List Derived Classes</a></li>
-        <li><a data-toggle="tab" href="#basic-element-schema-panel">Basic Element Schema</a></li>
-        <li><a data-toggle="tab" href="#class-graph-panel">Class graph view</a></li>
-        <li><a data-toggle="tab" href="#similarity-assessment-panel">Similarity Assessment</a></li>
+        <li class="active"><a data-toggle="tab" href="#basic-elements-list-panel" id="basic-elements-list-panel-link">List Basic Elements</a></li>
+        <li><a data-toggle="tab" href="#derived-classes-list-panel" id="derived-classes-list-panel-link">List Derived Classes</a></li>
+        <li><a data-toggle="tab" href="#basic-element-schema-panel" id="basic-element-schema-panel-link">Basic Element Schema</a></li>
+        <li><a data-toggle="tab" href="#class-graph-panel" id="class-graph-panel-link">Class graph view</a></li>
+        <li><a data-toggle="tab" href="#similarity-assessment-panel" id="similarity-assessment-panel-link">Similarity Assessment</a></li>
       </ul>
       <div class="tab-content">
         <div id="basic-elements-list-panel" class="tab-pane fade in active">
@@ -174,6 +181,8 @@
 <!-- Optional theme -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
+<link rel="stylesheet" href="{{ STATIC_URL }}lcmlutils/css/libs/bootstrap-tour/bootstrap-tour.min.css">
+
 <link rel="stylesheet" href="{{ STATIC_URL }}lcmlutils/css/classgraph.css">
 
 <link rel="stylesheet" href="{{ STATIC_URL }}lcmlutils/css/reclassification-table.css">
@@ -183,6 +192,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <!-- <script src="//code.jquery.com/jquery-1.11.1.min.js"></script> -->
 
+<script src="{{ STATIC_URL }}lcmlutils/js/libs/bootstrap-tour/bootstrap-tour.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="{{ STATIC_URL }}lcmlutils/js/class-diagram/class-diagram.js"></script>
 <script src="{{ STATIC_URL }}lcmlutils/js/class-diagram/class-graph.js"></script>
@@ -629,6 +639,57 @@
           'not_in_layer':additional_params.not_in_layer
       });
   };
+  function setupTour() {
+    var tour = new Tour({
+    steps: [
+      {
+        element: "#lcmlutils-tour-btn",
+        title: "Introduction",
+        placement: "auto left",
+        content: "LCMLUtils is a Python package designed to provide a way to work with LCML classes. The library provides basic implementations for managing LCCS3 legends, classes and validators with standard Django ORM architecture. Along with them, a set of utilities for handling basic elements, properties and characteristics is provided. Moreover, an experimental implementation of a similarity assessment is included. For more information about the LCML standard see: The technical report used as a gauide for the similarity assessment can be found at: For additional information about LCMLUtils see:"
+      },
+      {
+        element: "#lcmlutils-tour-btn",
+        title: "About this page",
+        placement: "auto left",
+        content: "A simple landing page has been designed to show the most relevant features of the package. The web page is organized in tabs, each one related to a different service to either handle LCML classes, show them or use advanced features such as the similarity assessment. Additional help support is available in individual tabs."
+      },
+      {
+        element: "#basic-elements-list-panel-link",
+        title: "List Basic Elements",
+        content: "List Basic Elements enable to list all the building blocks that can be used to describe a legend composed of one or more classes. Each entry reports the name of the building block. LC_Legend is marked as the root entry since each LCML legend starts with a LC_Legend block."
+      },
+      {
+        element: "#derived-classes-list-panel-link",
+        title: "List Derived Classes",
+        content: "List Derived Classes shows the hierarchy between blocks. Indeed, some basic elements inherit properties and characteristics from other elements. For an example, both LC_Trees and LC_Shrubs are derived from class LC_WoodyGrowthForms."
+      },
+      {
+        element: "#basic-element-schema-panel-link",
+        title: "Basic Element Schema",
+        content: "Basic Element Schema provides a synthetic view on the kind of information that can be represented in each basic element, by a list of properties and characteristics that can be added to it."
+      },
+      {
+        element: "#class-graph-panel-link",
+        title: "Class graph view",
+        content: "Class Graph View enables to obtain a graphical representation of a land cover class stored in a legend."
+      },
+      {
+        element: "#similarity-assessment-panel-link",
+        title: "Similarity assessment",
+        content: "Similarity assessment enables to compute a similarity score between each pair of classes stored in a reference legend (the source legend that needs to be reclassified) and query legend (the collection of query classes to use as the destination legend). The similarity threshold provides a way to pose a lower limit to the similarity score that is deemed to be acceptable for the mapping to be meaningful (strictly application and user dependent)."
+      }
+    ]});
+
+    // Initialize the tour
+    tour.init();
+
+    // Start the tour
+    tour.start();
+  };
+  $("#lcmlutils-tour-btn").click(function() {
+     setupTour(); 
+  });
   $("#query-btn").click(function() {
     debugger;
     var url = "{% url 'similarity-assessment' %}";
