@@ -50,7 +50,8 @@ def load_similarity_table_and_names(fn):
                 dd[names[r_idx]][names[c_idx]] = val
     except Exception, e:
         #print(e)
-        _breakpoint()
+        #_breakpoint()
+        pass
     return dd, names
  
  
@@ -107,6 +108,12 @@ def count_props_with_name_and_value_in_transcoded_class(transcoded_class, prop_n
                 for propname in elem.get('properties').keys() \
                     if propname==prop_name)    
 
+def count_basic_elements_with_name_and_value_including_additional_propname_in_transcoded_class(transcoded_class, prop_name, value, prop2_name):
+    return sum(
+        elem['properties'][propname].get('attributes').get('value')==value \
+            for elem in transcoded_class \
+                for propname in elem.get('properties').keys() \
+                    if propname==prop_name and prop2_name in elem.get('properties').keys())    
 
 def collect_values_for_props_with_name_in_transcoded_class(transcoded_class, prop_name, attr_name):
     return [
@@ -115,6 +122,33 @@ def collect_values_for_props_with_name_in_transcoded_class(transcoded_class, pro
                 for propname in elem.get('properties').keys() \
                     if propname==prop_name]
 
+def collect_values_for_props_with_name_having_additional_propname_in_transcoded_class(transcoded_class, prop_name, attr_name, prop2_name):
+    return [
+        elem['properties'][propname].get('attributes').get(attr_name) \
+            for elem in transcoded_class \
+                for propname in elem.get('properties').keys() \
+                    if propname==prop_name and prop2_name in elem.get('properties').keys()]
+
+
+def compute_property_extensiveness(transcoded_class, prop_name):
+    extensiveness_length = len(transcoded_class)
+    excl_elems_found = count_basic_elements_with_name_and_value_including_additional_propname_in_transcoded_class(transcoded_class, 'presence_type', 'Exclusive', prop_name)    
+    tempseq_elems_found = count_basic_elements_with_name_and_value_including_additional_propname_in_transcoded_class(transcoded_class, 'presence_type', 'Temporal Sequence Depending', prop_name)
+    mandatory_elems_found = count_basic_elements_with_name_and_value_including_additional_propname_in_transcoded_class(transcoded_class, 'presence_type', 'Mandatory', prop_name)
+    opt_elems_found = count_basic_elements_with_name_and_value_including_additional_propname_in_transcoded_class(transcoded_class, 'presence_type', 'Optional', prop_name)
+    print("exclusive: {0}; mandatory: {1}; temporal: {2}; optional {3}".format(excl_elems_found, mandatory_elems_found, tempseq_elems_found, opt_elems_found))
+    if excl_elems_found>0:
+        extensiveness_length = 1
+    else:
+        extensiveness_length = mandatory_elems_found
+        if tempseq_elems_found:
+            tempseq_types = collect_values_for_props_with_name_having_additional_propname_in_transcoded_class(transcoded_class, 'sequential_temporal_relationship', 'type',prop_name)
+            tempseq_sy_found = sum([v == 'Sequential Same Year' for v in tempseq_types])
+            print("tempseq sy: {0}".format(tempseq_sy_found))
+            extensiveness_length += tempseq_sy_found if tempseq_sy_found>0 else 1
+    print("extensiveness_length: {0}".format(extensiveness_length))
+    return extensiveness_length
+
 
 def compute_extensiveness(transcoded_class):
     extensiveness_length = len(transcoded_class)
@@ -122,15 +156,17 @@ def compute_extensiveness(transcoded_class):
     tempseq_elems_found = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'presence_type', 'Temporal Sequence Depending')
     mandatory_elems_found = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'presence_type', 'Mandatory')
     opt_elems_found = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'presence_type', 'Optional')
+    print("exclusive: {0}; mandatory: {1}; temporal: {2}; optional {3}".format(excl_elems_found, mandatory_elems_found, tempseq_elems_found, opt_elems_found))
     if excl_elems_found>0:
         extensiveness_length = 1
     else:
         extensiveness_length = mandatory_elems_found
         if tempseq_elems_found:
-            tempseq_types = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'sequential_temporal_relationship', 'type',)
             tempseq_types = collect_values_for_props_with_name_in_transcoded_class(transcoded_class, 'sequential_temporal_relationship', 'type',)
             tempseq_sy_found = sum([v == 'Sequential Same Year' for v in tempseq_types])
+            print("tempseq sy: {0}".format(tempseq_sy_found))
             extensiveness_length += tempseq_sy_found if tempseq_sy_found>0 else 1
+    print("extensiveness_length: {0}".format(extensiveness_length))
     return extensiveness_length
 
 def compute_phase1_ml(ref_class, query_class, names, dd, ed):
@@ -141,9 +177,11 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
     default_value = 1
     orig_ref_class_names = [qe.get('element_type') for qe in ref_class]
     orig_ref_class_uuids = [qe.get('element_uuid') for qe in ref_class]
-    orig_query_class_names = [qe.get('element_type') for qe in query_class]
-    orig_query_class_uuids = [qe.get('element_uuid') for qe in query_class]
+    orig_query_class_names = [qe.get('element_type') for qe in query_class if qe['properties']['presence_type']['attributes']['value']=='Mandatory']
+    orig_query_class_uuids = [qe.get('element_uuid') for qe in query_class if qe['properties']['presence_type']['attributes']['value']=='Mandatory']
     permutations = list(itertools.permutations(range(len(orig_query_class_names)), len(orig_query_class_names)))
+    pprint.pprint(permutations)
+    #_breakpoint()
     permutation_scores = []
     for permutation in permutations:
         pprint.pprint(permutation)
@@ -163,8 +201,9 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
             pprint.pprint('vs {0}'.format(ref_class_names))
             pprint.pprint(scores)
             try:
-                phi_score = max(scores)
-                phi_index = scores.index(phi_score)
+                max_score = max(scores)
+                phi_score = sum(scores)/float(len(scores))
+                phi_index = scores.index(max_score)
                 ref_class_pos = ref_class_positions[phi_index]
                 portioning_rc = ref_class[ref_class_pos].get('properties').get('portioning',{'attributes':{'min':100}}).get('attributes').get('min')
                 phi_scores.append(phi_score * portioning_rc/100.0)
@@ -192,6 +231,7 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
         print("ed:")
         print(ed)
         extensiveness_weight = ed.get(query_class_cnt,{}).get(ref_class_cnt,1) or 1
+        print('extensiveness {0} vs {1} = {2}'.format(ref_class_cnt, query_class_cnt, extensiveness_weight))
         psi_score = phi_score * extensiveness_weight
         final_score = psi_score
         print('final_score: {0}'.format(final_score))
@@ -205,12 +245,15 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
  
 def overlap_score(x1,x2,y1,y2):
     max_range_length = float(max(abs(x2-x1),abs(y2-y1)))
+    score = 0
     #print('max_range_length: {0}'.format(max_range_length))
     osc = (min(x2,y2) - max(x1,y1))
     if osc < 0:
         osc = 0
     #print('osc: {0}'.format(osc))
-    return (osc/max_range_length)*9 + 1 
+    if max_range_length>0:
+        score = (osc/max_range_length)*9 + 1
+    return(score) 
 
 
 props_mapping = {
@@ -231,6 +274,10 @@ IGNORED_PROPS_LIST_STEP2 = ['presence_type', 'portioning','sequential_temporal_r
  
  
 def compute_phase2_score(ref_class, query_class, names, dd, ed, phase1_meta={}):
+    print("ref class")
+    pprint.pprint(ref_class)
+    print("query class")
+    pprint.pprint(query_class)
     ref_class_cnt = compute_extensiveness(ref_class)
     query_class_cnt = compute_extensiveness(query_class)
     query_props_cnt = 0
@@ -240,7 +287,7 @@ def compute_phase2_score(ref_class, query_class, names, dd, ed, phase1_meta={}):
     default_value = 1
     ref_class_props = []
     query_class_props = []
-    prop_scores = []
+    prop_scores_dd = {}
     matching_pairs = copy.deepcopy(phase1_meta.get('matching_pairs',[]) or [])
     refc_elems = ref_class
     qc_elems = query_class
@@ -249,46 +296,74 @@ def compute_phase2_score(ref_class, query_class, names, dd, ed, phase1_meta={}):
         re = [rce for rce in refc_elems if rce.get('element_uuid')==mp['re_uuid']][0]
         re_props = re.get('properties')
         ret = re.get('element_type')
+        pprint.pprint(ret)
 
         qe = [qce for qce in qc_elems if qce.get('element_uuid')==mp['qe_uuid']][0]
         qe_props = qe.get('properties')
         qet = qe.get('element_type')
+        pprint.pprint(qet)
         #_breakpoint()
         for pn in qe_props.keys():
             print('analyzing property {0}...'.format(pn))
             if pn not in IGNORED_PROPS_LIST_STEP2:
                 query_props_cnt += 1
+                if pn not in prop_scores_dd.keys():
+                    prop_scores_dd[pn] = {"values":[], "extensiveness_score":0}
                 if pn in re_props.keys():
+                    pprint.pprint(pn)
                     pprint.pprint('matched...')
+                    qce = compute_property_extensiveness(query_class, pn)
+                    rce = compute_property_extensiveness(ref_class, pn)
+                    prop_scores_dd[pn]['extensiveness_score'] = (ed.get(qce,{}).get(rce, default_value) or default_value)
+                    #_breakpoint()
                     o_weight = 1.0
                     ref_props_cnt += 1
                     qp = qe_props[pn]
                     rp = re_props[pn]
-                    if pn in props_mapping.keys():
+                    if pn in props_mapping.keys() and ret==qet:
                         pmap = props_mapping.get(pn)
                         qpmap = pmap.get(qet, qet) or qet
                         rpmap = pmap.get(ret, ret) or ret
                         o_weight = (dd.get(qpmap,{}).get(rpmap, default_value) or default_value)/10.0
                     else:
                         o_weight = 1.0
-                    if qp.get('ranged_type')==True:
-                        o_score = overlap_score(int(qp['attributes']['min']), int(qp['attributes']['max']), 
-                                                int(rp['attributes']['min']), int(rp['attributes']['max']))
-                        pprint.pprint('oscore: {0}'.format(o_score))
+                    pprint.pprint('extensiveness-> Query: {0}/ Ref: {1}'.format(qce,rce))
+                    pprint.pprint('Property correspondence score: {0}'.format(o_weight))
+                    #_breakpoint()
+                    if o_weight<5 and qet!=ret:
+                        # ch 3.2, scenario 1
+                        pprint.pprint('ch 3.2, scenario 1 condition: oscore->0.1')
+                        o_score=0.1
                     else:
-                        o_score = 10 if qp['attributes'].get('value')==rp['attributes'].get('value') else 0
-                    o_score = o_score * o_weight                    
-                    prop_scores.append(o_score)
+                        if qp.get('ranged_type')==True:
+                            o_score = overlap_score(int(qp['attributes']['min']), int(qp['attributes']['max']), 
+                                                    int(rp['attributes']['min']), int(rp['attributes']['max']))
+                            pprint.pprint('oscore: {0}'.format(o_score))
+                        else:
+                            o_score = 10 if qp['attributes'].get('value')==rp['attributes'].get('value') else 0
+                        o_score = o_score * o_weight   
+                    #_breakpoint()                 
+                    prop_scores_dd[pn]['values'].append(o_score)
     final_score = None
-    if len(prop_scores)>0:
-        prop_score = mean(prop_scores)
-        pprint.pprint('mean prop score: {0}'.format(prop_score))
-        pprint.pprint('query props count: {0}'.format(query_props_cnt))
-        pprint.pprint('ref props count: {0}'.format(ref_props_cnt))
-        extensiveness_weight = ed.get(query_props_cnt,{}).get(ref_props_cnt,1) or 1
-        pprint.pprint('extensiveness: {0}'.format(extensiveness_weight))
-        psi_score = prop_score * extensiveness_weight
-        final_score = psi_score
+    pprint.pprint(prop_scores_dd.keys())
+    #_breakpoint()
+    if len(prop_scores_dd.keys())>0:
+        partials = []
+        for k in prop_scores_dd.keys():
+            entry = prop_scores_dd[k]
+            extensiveness_score = entry['extensiveness_score']
+            values = entry['values']
+            if len(values)>0:
+                mean_value = mean(values)
+                partials.append(mean_value*extensiveness_score)
+
+        prop_score = mean(partials)
+        #pprint.pprint('mean prop score: {0}'.format(prop_score))
+        #extensiveness_weight = ed.get(query_props_cnt,{}).get(ref_props_cnt,1) or 1
+        #pprint.pprint('extensiveness: {0}'.format(extensiveness_weight))
+        #psi_score = prop_score * extensiveness_weight
+        #final_score = psi_score
+        final_score = prop_score
         print('final score props: {0}'.format(final_score))
     return final_score
 
@@ -350,6 +425,8 @@ def transcode_lccs3_classes(xml_text):
             el_dd['element_type'] = el.attrib['{http://www.w3.org/2001/XMLSchema-instance}type']
             print('handling element {0}...'.format(el_dd['element_type']))
             el_dd['properties'] = {}
+            el_stratum = el.getparent().getparent()
+            pt_stratum = el_stratum.find('presence_type').text or 'Mandatory'
             for elch in el.getchildren():
                 tag = elch.tag
                 print('handling property {0}...'.format(tag))
@@ -359,7 +436,11 @@ def transcode_lccs3_classes(xml_text):
                 if tag not in IGNORED_PROPS_LIST:
                     if elch.text and len(elch.text.strip(' \t\r\n'))>0:
                         #prop_dd['property_name'] = tag
-                        prop_dd['attributes'] = {'value': elch.text}
+                        elch_val = elch.text
+                        if tag=='presence_type':
+                            if pt_stratum=='Optional':
+                                elch_val = 'Optional'
+                        prop_dd['attributes'] = {'value': elch_val}
                         prop_dd['ranged_type'] = False
                         el_dd['properties'][tag] = prop_dd
                     else:
@@ -495,7 +576,7 @@ def perform_assessment(wl, qcm):
                 else:
                     pprint.pprint('no computation possible for phase2, skipping')
                     total_score = score_phase1
-                #print('total score: {0}'.format(total_score))
+                print('total score: {0}'.format(total_score))
                 scores_kv[cl.get('map_code')] = total_score
             dd['scores'][qc.get('map_code')] = scores_kv
     return dd

@@ -10,6 +10,7 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     'lcmlutils.views',
+    url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^$', 'index', name='index'),
     url(r'^rest/', include(router.urls)),
     url(r'^services/list-basic-elements', 'list_basic_elements', name='list-basic-elements'),

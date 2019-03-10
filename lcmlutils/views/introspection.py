@@ -40,7 +40,7 @@ def derived_classes_list(request, basename):
     while len(open_set)>0:
         baseclass_name = open_set.pop()
         elements = doc.xpath("xs:element[@name='{0}']".format(baseclass_name), namespaces = namespaces)
-        if len(elements)>0:
+        if len(elements)>0 and baseclass_name!=basename:
             closed_set.add(baseclass_name)
         xpath = "xs:complexType/xs:complexContent/xs:extension[@base='{0}']/../../@name".format(baseclass_name)
         derived_names = doc.xpath(xpath, namespaces = namespaces)
