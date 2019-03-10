@@ -1,0 +1,106 @@
+<LC_Legend xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="1" lccs_sort="0" uuid="b654cba0-f684-11de-8d21-e06995627ffe" xsi:noNamespaceSchemaLocation="LandUseSRDI.xsd" xsi:type="LC_Legend">
+   <name>SRDI_2004</name>
+   <description>Describe the legend</description>
+   <elements>
+      <LC_LandCoverClass id="6C" uuid="93a24aa0-f68a-11de-b401-e06995627ffe" xsi:type="LC_LandCoverClass">
+         <name>Fallow-T.aus-T.aman</name>
+         <description>Describe the land cover class</description>
+         <map_code>4</map_code>
+         <elements>
+            <LC_HorizontalPattern id="6D" uuid="a79a4a80-f68a-11de-b401-e06995627ffe" xsi:type="LC_HorizontalPattern">
+               <name>Horizontal Pattern 1</name>
+               <description>Describe the horizontal pattern</description>
+               <elements>
+                  <LC_Stratum id="6E" ontop="0" uuid="afac7bd0-f68a-11de-b401-e06995627ffe" xsi:type="LC_Stratum">
+                     <name>Stratum 1</name>
+                     <description>Sequential temporal relationship 1</description>
+                     <elements>
+                        <LC_LandCoverElement id="86" uuid="42329120-f68f-11de-b401-e06995627ffe" xsi:type="LC_BareSoil">
+                           <name>Bare Soil</name>
+                           <description>Describe a bare soil surface type</description>
+                           <sequential_temporal_relationship>
+                              <type>Sequential Same Year</type>
+                              <length max="7.0" min="4.0"/>
+                           </sequential_temporal_relationship>
+                           <presence_type>Temporal Sequence Depending</presence_type>
+                        </LC_LandCoverElement>
+                        <LC_LandCoverElement id="6F" uuid="0f85e0e1-f68c-11de-b401-e06995627ffe" xsi:type="LC_HerbaceousGrowthForms">
+                           <name>Herbaceous growth forms</name>
+                           <description>Describe a vegetation element of herbaceous growth form type</description>
+                           <sequential_temporal_relationship>
+                              <type>Sequential Same Year</type>
+                              <length max="7.0" min="4.0"/>
+                           </sequential_temporal_relationship>
+                           <elements>
+                              <LC_Characteristic id="70" uuid="27a47287-43af-11de-bbd4-000cf147c442" xsi:type="LC_CultivatedAndManagedVegetation">
+                                 <name>Cultivated And Managed Vegetation</name>
+                                 <description>Describe the cultivated and managed vegetation</description>
+                                 <elements>
+                                    <LC_Characteristic id="71" uuid="55c4b640-915b-11de-bb5d-000cf147c442" xsi:type="LC_Irrigation">
+                                       <name>Irrigation</name>
+                                       <description>Describe the irrigation</description>
+                                       <percentage max="30.0" min="20.0"/>
+                                       <irrigation_type>Surface</irrigation_type>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                              <LC_Characteristic id="72" uuid="27a47295-43af-11de-bbd4-000cf147c442" xsi:type="LC_FloristicAspect">
+                                 <name>Floristic Aspect</name>
+                                 <description>Describe the floristic aspect</description>
+                                 <elements>
+                                    <LC_Characteristic id="73" uuid="0f85e0e0-f68c-11de-b401-e06995627ffe" xsi:type="LC_FloristicAspectSpecies">
+                                       <name>Floristic Aspect Species</name>
+                                       <description>Describe the floristic aspect species</description>
+                                       <species_name>T.aus</species_name>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Temporal Sequence Depending</presence_type>
+                           <cover max="40.0" min="20.0"/>
+                        </LC_LandCoverElement>
+                        <LC_LandCoverElement id="74" uuid="328cb4b0-f68c-11de-b401-e06995627ffe" xsi:type="LC_HerbaceousGrowthForms">
+                           <name>Herbaceous growth forms</name>
+                           <description>Describe a vegetation element of herbaceous growth form type</description>
+                           <sequential_temporal_relationship>
+                              <type>Sequential Same Year</type>
+                              <length max="10.0" min="7.0"/>
+                           </sequential_temporal_relationship>
+                           <elements>
+                              <LC_Characteristic id="75" uuid="27a47295-43af-11de-bbd4-000cf147c442" xsi:type="LC_FloristicAspect">
+                                 <name>Floristic Aspect</name>
+                                 <description>Describe the floristic aspect</description>
+                                 <elements>
+                                    <LC_Characteristic id="76" uuid="528b9fb0-f68c-11de-b401-e06995627ffe" xsi:type="LC_FloristicAspectSpecies">
+                                       <name>Floristic Aspect Species</name>
+                                       <description>Describe the floristic aspect species</description>
+                                       <species_name>T.Aman</species_name>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                              <LC_Characteristic id="77" uuid="27a47287-43af-11de-bbd4-000cf147c442" xsi:type="LC_CultivatedAndManagedVegetation">
+                                 <name>Cultivated And Managed Vegetation</name>
+                                 <description>Describe the cultivated and managed vegetation</description>
+                                 <elements>
+                                    <LC_Characteristic id="78" uuid="55c4b63e-915b-11de-bb5d-000cf147c442" xsi:type="LC_Rainfed">
+                                       <name>Rainfed</name>
+                                       <description>Describe the rainfed</description>
+                                       <percentage max="100.0" min="80.0"/>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Temporal Sequence Depending</presence_type>
+                           <cover max="60.0" min="30.0"/>
+                           <height max="80.0" min="30.0"/>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Mandatory</presence_type>
+                  </LC_Stratum>
+               </elements>
+            </LC_HorizontalPattern>
+         </elements>
+      </LC_LandCoverClass>
+    </elements>
+</LC_Legend>
+      

@@ -1,0 +1,5 @@
+*.pyc
+foundation/development.db
+*.DS_Store
+*._DS_Store
+
