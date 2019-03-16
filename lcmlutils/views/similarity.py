@@ -175,10 +175,11 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
     cnt1 = 0
     final_score = 0
     default_value = 1
-    orig_ref_class_names = [qe.get('element_type') for qe in ref_class]
-    orig_ref_class_uuids = [qe.get('element_uuid') for qe in ref_class]
-    orig_query_class_names = [qe.get('element_type') for qe in query_class if qe['properties']['presence_type']['attributes']['value']=='Mandatory']
-    orig_query_class_uuids = [qe.get('element_uuid') for qe in query_class if qe['properties']['presence_type']['attributes']['value']=='Mandatory']
+    accepted_pt = ['Mandatory','Exclusive']
+    orig_ref_class_names = [rec.get('element_type') for rec in ref_class]
+    orig_ref_class_uuids = [rec.get('element_uuid') for rec in ref_class]
+    orig_query_class_names = [qe.get('element_type') for qe in query_class if qe['properties']['presence_type']['attributes']['value'] in accepted_pt]
+    orig_query_class_uuids = [qe.get('element_uuid') for qe in query_class if qe['properties']['presence_type']['attributes']['value'] in accepted_pt]
     permutations = list(itertools.permutations(range(len(orig_query_class_names)), len(orig_query_class_names)))
     pprint.pprint(permutations)
     #_breakpoint()
@@ -207,7 +208,9 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
                 ref_class_pos = ref_class_positions[phi_index]
                 portioning_rc = ref_class[ref_class_pos].get('properties').get('portioning',{'attributes':{'min':100}}).get('attributes').get('min')
                 phi_scores.append(phi_score * portioning_rc/100.0)
-                matching_pairs.append({'qe_uuid': query_class_uuids[qidx],'re_uuid': ref_class_uuids[phi_index]})
+                qe = [qce for qce in query_class if qce.get('element_uuid')==mp['qe_uuid']][0]
+                qe_props = qe.get('properties')
+                matching_pairs.append({'qe_uuid': query_class_uuids[qidx], 'qe_props':qe_props, 're_uuid': ref_class_uuids[phi_index]})
                 del ref_class_names[phi_index]
                 del ref_class_uuids[phi_index]
                 del ref_class_positions[phi_index]
