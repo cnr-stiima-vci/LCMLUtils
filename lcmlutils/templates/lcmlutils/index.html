@@ -517,7 +517,7 @@
       var tt = the_table;
       //var tt = $('#LCML-reclassification-table');
       var table_rows = Object.keys(scores);
-      var table_columns = query_classes;
+      var table_columns = additional_params["query_classes_description"] || query_classes;
       var computed_width_columns = [];
 
       for (var idx = 0; idx <table_columns.length; idx++)
@@ -633,7 +633,7 @@
           //console.log(newtr[0]);
       }, {
           'tbody':tt.find('tbody'),
-          'columns':table_columns,
+          'columns':query_classes,
           'scores':scores,
           'score_threshold':additional_params.similarity_threshold,
           'not_in_layer':additional_params.not_in_layer
@@ -717,7 +717,11 @@
             //$('#lccs3-reclassification-table-dlg').dialog();
           var tt = $('#LCML-reclassification-table');
           var columns = data["query_classes"];
+          var column_descriptions = [];
           debugger;
+          for (qcidx in data["query_classes"])
+              column_descriptions.push(data["query_classes"][qcidx]+": "+data["query_names_dict"][data["query_classes"][qcidx]]);          
+          this.additional_params["query_classes_description"]=column_descriptions;
           reference_class_names = Object.keys(data.scores);
           showReclassificationTable(tt, data.scores, columns, this.additional_params); 
         },

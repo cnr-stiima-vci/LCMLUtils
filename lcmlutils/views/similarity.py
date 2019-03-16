@@ -541,14 +541,29 @@ def test():
         print('total score: {0}'.format(total_score))
 
 
+def get_legend_description(doc_legend):
+    dd = {'class_codes':[],'names_dict':{}}
+    lc_classes = doc_legend.findall('elements/LC_LandCoverClass/map_code', namespaces)
+    for lc in lc_classes:
+        dd['class_codes'].append(lc.text)
+        name = lc.getparent().find('name').text
+        dd['names_dict'][lc.text] = name
+    return dd
+
 def perform_assessment(wl, qcm):
     dd = {}
     doc = etree.fromstring(wl.xml_text)
-    lc_classes = doc.findall('elements/LC_LandCoverClass/map_code', namespaces)
-    dd['working_classes'] = [lc.text for lc in lc_classes]
+    #lc_classes = doc.findall('elements/LC_LandCoverClass/map_code', namespaces)
+    #dd['working_classes'] = [lc.text for lc in lc_classes]
+    dld = get_legend_description(doc)
+    dd['working_classes'] = dld['class_codes']
+    dd['working_names_dict'] = dld['names_dict']
     doc = etree.fromstring(qcm.xml_text)
-    lc_classes = doc.findall('elements/LC_LandCoverClass/map_code', namespaces)
-    dd['query_classes'] = [lc.text for lc in lc_classes]
+    #lc_classes = doc.findall('elements/LC_LandCoverClass/map_code', namespaces)
+    #dd['query_classes'] = [lc.text for lc in lc_classes]
+    dld = get_legend_description(doc)
+    dd['query_classes'] = dld['class_codes']
+    dd['query_names_dict'] = dld['names_dict']
     dd['scores'] = {}
     if wl and qcm:
         query_classes = transcode_lccs3_classes(qcm.xml_text)
@@ -602,7 +617,9 @@ def invert_payload_order(original_dd):
     dd = {
         'scores':{}, 
         'working_classes':original_dd.get('working_classes'),
-        'query_classes':original_dd.get('query_classes')
+        'query_classes':original_dd.get('query_classes'),
+        'working_names_dict':original_dd.get('working_names_dict'),
+        'query_names_dict':original_dd.get('query_names_dict')
     }
     scores_dd = original_dd.get('scores')
     for k in scores_dd.keys():
