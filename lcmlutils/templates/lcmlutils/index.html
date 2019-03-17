@@ -624,6 +624,8 @@
               var td_with_scores = $('<td>')
                                       .attr('colspan',this.columns.length+1)
                                       .append(div_with_scores);
+              if (this.working_names_dict)
+                value = value + ": " + this.working_names_dict[value];
               var newtr = $('<tr>')
                               .append($('<td>').text(value))
                               .append(td_with_scores);
@@ -636,7 +638,8 @@
           'columns':query_classes,
           'scores':scores,
           'score_threshold':additional_params.similarity_threshold,
-          'not_in_layer':additional_params.not_in_layer
+          'not_in_layer':additional_params.not_in_layer,
+          'working_names_dict': additional_params.working_names_dict
       });
   };
   function setupTour() {
@@ -718,10 +721,15 @@
           var tt = $('#LCML-reclassification-table');
           var columns = data["query_classes"];
           var column_descriptions = [];
+	        var row_descriptions = [];
           debugger;
           for (qcidx in data["query_classes"])
               column_descriptions.push(data["query_classes"][qcidx]+": "+data["query_names_dict"][data["query_classes"][qcidx]]);          
           this.additional_params["query_classes_description"]=column_descriptions;
+	        for (wcidx in data["working_classes"])
+              row_descriptions.push(data["working_classes"][wcidx]+": "+data["working_names_dict"][data["working_classes"][wcidx]]);
+          this.additional_params["working_classes_description"] =row_descriptions;
+          this.additional_params["working_names_dict"] = data["working_names_dict"];
           reference_class_names = Object.keys(data.scores);
           showReclassificationTable(tt, data.scores, columns, this.additional_params); 
         },
