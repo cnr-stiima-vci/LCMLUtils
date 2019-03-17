@@ -158,7 +158,7 @@ def compute_extensiveness(transcoded_class):
     opt_elems_found = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'presence_type', 'Optional')
     print("exclusive: {0}; mandatory: {1}; temporal: {2}; optional {3}".format(excl_elems_found, mandatory_elems_found, tempseq_elems_found, opt_elems_found))
     if excl_elems_found>0:
-        extensiveness_length = 1
+        extensiveness_length = 1 + mandatory_elems_found
     else:
         extensiveness_length = mandatory_elems_found
         if tempseq_elems_found:
