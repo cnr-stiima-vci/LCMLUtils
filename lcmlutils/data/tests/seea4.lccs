@@ -1,0 +1,66 @@
+<LC_Legend xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="1" lccs_sort="0" uuid="852ea230-e00e-11e8-88f7-68f728332aa7" xsi:noNamespaceSchemaLocation="New Legend SEEA.xsd" xsi:type="LC_Legend">
+   <name>New Legend 1</name>
+   <description>Describe the legend</description>
+   <elements>
+      <LC_LandCoverClass id="16" uuid="46121993-e010-11e8-88f7-68f728332aa7" xsi:type="LC_LandCoverClass">
+         <name>Multiple or layered crops</name>
+         <description>Describe the land cover class</description>
+         <map_code>lcc4</map_code>
+         <elements>
+            <LC_HorizontalPattern id="17" uuid="46121992-e010-11e8-88f7-68f728332aa7" xsi:type="LC_HorizontalPattern">
+               <name>Horizontal Pattern 1</name>
+               <description>Describe the horizontal pattern</description>
+               <elements>
+                  <LC_Stratum id="18" ontop="0" uuid="461092f1-e010-11e8-88f7-68f728332aa7" xsi:type="LC_Stratum">
+                     <name>Stratum 1</name>
+                     <description>Vegetation 1</description>
+                     <elements>
+                        <LC_LandCoverElement id="19" uuid="460f3360-e010-11e8-88f7-68f728332aa7" xsi:type="LC_WoodyGrowthForms">
+                           <name>Woody Growth Forms</name>
+                           <description>Describe a vegetation element of woody type</description>
+                           <elements>
+                              <LC_Characteristic id="1A" uuid="27a47287-43af-11de-bbd4-000cf147c442" xsi:type="LC_CultivatedAndManagedVegetation">
+                                 <name>Cultivated And Managed Vegetation</name>
+                                 <description>Describe the cultivated and managed vegetation</description>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Exclusive</presence_type>
+                        </LC_LandCoverElement>
+                        <LC_LandCoverElement id="1B" uuid="461092f0-e010-11e8-88f7-68f728332aa7" xsi:type="LC_WoodyGrowthForms">
+                           <name>Woody Growth Forms</name>
+                           <description>Describe a vegetation element of woody type</description>
+                           <elements>
+                              <LC_Characteristic id="1C" uuid="27a47286-43af-11de-bbd4-000cf147c442" xsi:type="LC_NaturalOrSeminaturalVegetation">
+                                 <name>Natural Or Seminatural Vegetation</name>
+                                 <description>Describe the natural or seminatural vegetation</description>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Exclusive</presence_type>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Mandatory</presence_type>
+                  </LC_Stratum>
+                  <LC_Stratum id="1D" ontop="0" uuid="46121991-e010-11e8-88f7-68f728332aa7" xsi:type="LC_Stratum">
+                     <name>Stratum 2</name>
+                     <description>Vegetation 2</description>
+                     <elements>
+                        <LC_LandCoverElement id="1E" uuid="46121990-e010-11e8-88f7-68f728332aa7" xsi:type="LC_HerbaceousGrowthForms">
+                           <name>Herbaceous growth forms</name>
+                           <description>Describe a vegetation element of herbaceous growth form type</description>
+                           <elements>
+                              <LC_Characteristic id="1F" uuid="27a47287-43af-11de-bbd4-000cf147c442" xsi:type="LC_CultivatedAndManagedVegetation">
+                                 <name>Cultivated And Managed Vegetation</name>
+                                 <description>Describe the cultivated and managed vegetation</description>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Mandatory</presence_type>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Mandatory</presence_type>
+                  </LC_Stratum>
+               </elements>
+            </LC_HorizontalPattern>
+         </elements>
+      </LC_LandCoverClass>
+   </elements>
+</LC_Legend>

@@ -1,0 +1,44 @@
+<LC_Legend xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="1" lccs_sort="0" uuid="b654cba0-f684-11de-8d21-e06995627ffe" xsi:noNamespaceSchemaLocation="LandUseSRDI.xsd" xsi:type="LC_Legend">
+   <name>SRDI_2004</name>
+   <description>Describe the legend</description>
+   <elements>
+      <LC_LandCoverClass id="E9" uuid="30aa6370-e8d1-11e5-9e4d-08edb992a1ff" xsi:type="LC_LandCoverClass">
+         <name>Pineapple</name>
+         <description>Describe the land cover class</description>
+         <map_code>14</map_code>
+         <elements>
+            <LC_HorizontalPattern id="EA" uuid="49e2aff0-e8d1-11e5-9e4d-08edb992a1ff" xsi:type="LC_HorizontalPattern">
+               <name>Horizontal Pattern 1</name>
+               <description>Describe the horizontal pattern</description>
+               <elements>
+                  <LC_Stratum id="EB" ontop="0" uuid="4cb46d90-e8d1-11e5-9e4d-08edb992a1ff" xsi:type="LC_Stratum">
+                     <name>Stratum 1</name>
+                     <description>Vegetation 1</description>
+                     <elements>
+                        <LC_LandCoverElement id="EC" uuid="b33ee2c0-e8d1-11e5-9e4d-08edb992a1ff" xsi:type="LC_HerbaceousGrowthForms">
+                           <name>Herbaceous growth forms</name>
+                           <description>Describe a vegetation element of herbaceous growth form type</description>
+                           <elements>
+                              <LC_Characteristic id="ED" uuid="27a47287-43af-11de-bbd4-000cf147c442" xsi:type="LC_CultivatedAndManagedVegetation">
+                                 <name>Cultivated And Managed Vegetation</name>
+                                 <description>Describe the cultivated and managed vegetation</description>
+                                 <elements>
+                                    <LC_Characteristic id="EE" uuid="55c4b640-915b-11de-bb5d-000cf147c442" xsi:type="LC_Irrigation">
+                                       <name>Irrigation</name>
+                                       <description>Describe the irrigation</description>
+                                       <irrigation_type>Surface</irrigation_type>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Mandatory</presence_type>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Mandatory</presence_type>
+                  </LC_Stratum>
+               </elements>
+            </LC_HorizontalPattern>
+         </elements>
+      </LC_LandCoverClass>
+   </elements>
+</LC_Legend>

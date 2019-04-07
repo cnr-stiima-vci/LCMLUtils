@@ -688,7 +688,8 @@
     tour.init();
 
     // Start the tour
-    tour.start();
+    tour.setCurrentStep(0);
+    tour.restart();
   };
   $("#lcmlutils-tour-btn").click(function() {
      setupTour(); 

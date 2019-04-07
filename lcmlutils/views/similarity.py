@@ -158,7 +158,7 @@ def compute_extensiveness(transcoded_class):
     opt_elems_found = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'presence_type', 'Optional')
     print("exclusive: {0}; mandatory: {1}; temporal: {2}; optional {3}".format(excl_elems_found, mandatory_elems_found, tempseq_elems_found, opt_elems_found))
     if excl_elems_found>0:
-        extensiveness_length = 1 + mandatory_elems_found
+        extensiveness_length = 1 # + mandatory_elems_found
     else:
         extensiveness_length = mandatory_elems_found
         if tempseq_elems_found:
@@ -182,7 +182,7 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
     orig_query_class_uuids = [qe.get('element_uuid') for qe in query_class if qe['properties']['presence_type']['attributes']['value'] in accepted_pt]
     permutations = list(itertools.permutations(range(len(orig_query_class_names)), len(orig_query_class_names)))
     pprint.pprint(permutations)
-    #_breakpoint()
+    _breakpoint()
     permutation_scores = []
     for permutation in permutations:
         pprint.pprint(permutation)
@@ -594,6 +594,8 @@ def perform_assessment(wl, qcm):
                 else:
                     pprint.pprint('no computation possible for phase2, skipping')
                     total_score = score_phase1
+                #if total_score>100: # FIXME: usually happens with multiple basic elemenets in horizontal patterns
+                #    total_score = 100.0
                 print('total score: {0}'.format(total_score))
                 scores_kv[cl.get('map_code')] = total_score
             dd['scores'][qc.get('map_code')] = scores_kv
