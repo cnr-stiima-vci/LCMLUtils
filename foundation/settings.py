@@ -103,6 +103,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.messages',
     'django.contrib.humanize',
+    'django.contrib.sites',
     'bootstrap3',
     'lcmlutils',
     'rest_framework',

@@ -53,11 +53,11 @@ def test_case(case_name):
         c2fn = get_lc_class_fn(entry["class2"])
         c1 = load_lccs_class(c1fn)
         c2 = load_lccs_class(c2fn)
-	_breakpoint()
         res = perform_assessment(c1,c2)
         #self.assertEqual(True,True)
 
 class SimilarityTests(TestCase):
    def test00(self):
        print("testing with utility functions")
+       _breakpoint()
        test_case("sylhet21_seea7")

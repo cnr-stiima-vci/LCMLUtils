@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from models import XSDValidator, LCCS3Class, LCCS3Legend
+from .models import XSDValidator, LCCS3Class, LCCS3Legend
 
 # Register your models here.
 class XSDValidatorAdmin(admin.ModelAdmin):

@@ -28,7 +28,7 @@ class XSDValidator(models.Model):
     link = models.CharField(_('link'), max_length=128, null=True, blank=True)
     
     def __str__(self):
-        return "%s" % self.name.encode('utf-8')
+        return "%s" % self.name
 
     class Meta:
         db_table = 'lcmlutils_xsdvalidators'
@@ -49,7 +49,7 @@ class LCCS3Class(models.Model):
     validator = models.ForeignKey('XSDValidator', on_delete = models.CASCADE)
 
     def __str__(self):
-        return "%s" % self.name.encode('utf-8')
+        return("%s" % self.name)
 
     class Meta:
         db_table = 'lcmlutils_lccs3classes'
@@ -77,7 +77,7 @@ class LCCS3Legend(models.Model):
     link = models.CharField(_('link'), max_length=128, null=True, blank=True)
 
     def __str__(self):
-        return "%s" % self.name.encode('utf-8')
+        return("{0}".format(self.name))
 
     class Meta:
         db_table = 'lcmlutils_lccs3legends'

@@ -16,17 +16,13 @@ from openpyxl.utils import (get_column_letter)
 from difflib import SequenceMatcher as SM
 from pdb import set_trace as _breakpoint
 
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse 
 from django.views.decorators.csrf import csrf_exempt
  
 from lcmlutils.settings import DATA_PATH, BFIS_SERVICE_PORT
-from lcmlutils.models import *
+from lcmlutils.models import LCCS3Class, LCCS3Legend
+from lcmlutils.views.transcoding import transcode_lccs3_classes, namespaces
 
-
-namespaces = {'xs':'http://www.w3.org/2001/XMLSchema',
-"re": "http://exslt.org/regular-expressions"}
- 
 biotic_sim_dict = {}
 extensiveness_dict = {}
  
@@ -48,7 +44,7 @@ def load_similarity_table_and_names(fn):
                 cell_pos = get_column_letter(c_idx+2)+str(r_idx+1)
                 val = ws[cell_pos].value
                 dd[names[r_idx]][names[c_idx]] = val
-    except Exception, e:
+    except Exception:
         #print(e)
         #_breakpoint()
         pass
@@ -87,7 +83,7 @@ def compute_phase1_score(ref_class, query_class, names, dd, ed):
             #eps_score = phi_score * weights_mapping_dict[ref_class_cnt][phi_index]
             #eps_scores.append(eps_score)
             cnt1+=1
-        except Exception, e:
+        except Exception:
             pass
     print('ref class: {0}'.format(ref_class))
     print('query class: {0}'.format(query_class))
@@ -151,7 +147,7 @@ def compute_property_extensiveness(transcoded_class, prop_name):
 
 
 def compute_extensiveness(transcoded_class):
-    extensiveness_length = len(transcoded_class)
+    extensiveness_length = len(list(transcoded_class))
     excl_elems_found = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'presence_type', 'Exclusive')    
     tempseq_elems_found = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'presence_type', 'Temporal Sequence Depending')
     mandatory_elems_found = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'presence_type', 'Mandatory')
@@ -175,14 +171,13 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
     cnt1 = 0
     final_score = 0
     default_value = 1
-    accepted_pt = ['Mandatory','Exclusive']
+    accepted_pt = ['Mandatory','Exclusive'] #, 'Temporal Sequence Depending'
     orig_ref_class_names = [rec.get('element_type') for rec in ref_class]
     orig_ref_class_uuids = [rec.get('element_uuid') for rec in ref_class]
     orig_query_class_names = [qe.get('element_type') for qe in query_class if qe['properties']['presence_type']['attributes']['value'] in accepted_pt]
     orig_query_class_uuids = [qe.get('element_uuid') for qe in query_class if qe['properties']['presence_type']['attributes']['value'] in accepted_pt]
     permutations = list(itertools.permutations(range(len(orig_query_class_names)), len(orig_query_class_names)))
     pprint.pprint(permutations)
-    _breakpoint()
     permutation_scores = []
     for permutation in permutations:
         pprint.pprint(permutation)
@@ -208,7 +203,7 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
                 ref_class_pos = ref_class_positions[phi_index]
                 portioning_rc = ref_class[ref_class_pos].get('properties').get('portioning',{'attributes':{'min':100}}).get('attributes').get('min')
                 phi_scores.append(phi_score * portioning_rc/100.0)
-                qe = [qce for qce in query_class if qce.get('element_uuid')==mp['qe_uuid']][0]
+                qe = [qce for qce in query_class if qce.get('element_uuid')==mp['qe_uuid']][0] # <----
                 qe_props = qe.get('properties')
                 matching_pairs.append({'qe_uuid': query_class_uuids[qidx], 'qe_props':qe_props, 're_uuid': ref_class_uuids[phi_index]})
                 del ref_class_names[phi_index]
@@ -221,7 +216,7 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
                 if is_seq_sy_elem:
                     query_class_cnt = len(phi_scores)
                     break
-            except Exception, e:
+            except Exception as e:
                 pass
             qidx+=1
         #print('ref class: {0}'.format(ref_class))
@@ -271,7 +266,6 @@ props_mapping = {
     }
 }
 
-IGNORED_PROPS_LIST = ['name', 'description', 'elements',]
 
 IGNORED_PROPS_LIST_STEP2 = ['presence_type', 'portioning','sequential_temporal_relationship',]
  
@@ -411,69 +405,6 @@ extensiveness_dict = None
 for fn in ext_fns:
     extensiveness_dict = load_extensiveness_dict(fn)
 
-
-def transcode_lccs3_classes(xml_text):
-    doc = etree.fromstring(xml_text)
-    lc_classes = doc.findall('elements/LC_LandCoverClass', namespaces)
-    classes_list = []
-    for lc_class in lc_classes:
-        class_dd = {}
-        class_dd['name'] = lc_class.find('./name').text
-        class_dd['map_code'] = lc_class.find('./map_code').text
-        class_dd['elements'] = []
-        lc_elements = lc_class.findall('.//LC_LandCoverElement', namespaces = namespaces)
-        for el in lc_elements:
-            el_dd = {}
-            el_dd['element_uuid'] = el.attrib['uuid']
-            el_dd['element_type'] = el.attrib['{http://www.w3.org/2001/XMLSchema-instance}type']
-            print('handling element {0}...'.format(el_dd['element_type']))
-            el_dd['properties'] = {}
-            el_stratum = el.getparent().getparent()
-            pt_stratum = el_stratum.find('presence_type').text or 'Mandatory'
-            for elch in el.getchildren():
-                tag = elch.tag
-                print('handling property {0}...'.format(tag))
-                #if tag=='sequential_temporal_relationship':
-                #    _breakpoint() # gestire casi come sequential_temporal_relationship->type
-                prop_dd = {}
-                if tag not in IGNORED_PROPS_LIST:
-                    if elch.text and len(elch.text.strip(' \t\r\n'))>0:
-                        #prop_dd['property_name'] = tag
-                        elch_val = elch.text
-                        if tag=='presence_type':
-                            if pt_stratum=='Optional':
-                                elch_val = 'Optional'
-                        prop_dd['attributes'] = {'value': elch_val}
-                        prop_dd['ranged_type'] = False
-                        el_dd['properties'][tag] = prop_dd
-                    else:
-                        prop_name = tag
-                        #if tag in props_mapping.keys():
-                        #    prop_name = props_mapping[tag].get(el_dd['element_type'])
-                        if prop_name:
-                            prop_dd = {}
-                            #prop_dd['property_name'] = prop_name
-                            print elch.tag
-                            prop_dd['attributes'] = {}
-                            for k,v in elch.items():
-                                if re.match("^\d+?\.\d+?$", v) is None:
-                                    prop_dd['attributes'][k] = v
-                                else:
-                                    prop_dd['attributes'][k] = float(v)
-                            if 'min' in prop_dd['attributes']:
-                                prop_dd['ranged_type'] = True
-                            for tagc in elch.getchildren():
-                                if 'type' not in tagc.keys():
-                                    prop_dd['attributes'][tagc.tag] = tagc.text
-                            el_dd['properties'][prop_name] = prop_dd                        
-            class_dd['elements'].append(el_dd)
-        classes_list.append(class_dd)
-    pprint.pprint('transcoded class:')
-    pprint.pprint(classes_list)
-    return classes_list
-
-
-
 def test():
     '''
     query_class = [
@@ -584,7 +515,8 @@ def perform_assessment(wl, qcm):
                 score_phase1 = newlist[0]['score']
                 matching_pairs = newlist[0]['matching_pairs']
                 pprint.pprint('score phase1: {0}'.format(score_phase1))
-                ml_query_class = map(lambda i: query_class[i], newlist[0]['permutation'])
+                ml_query_class = list(map(lambda i: query_class[i], newlist[0]['permutation']))
+                #ml_query_class = copy.copy(query_class[newlist[0]['permutation'][0]])
                 score_phase2 = compute_phase2_score(ref_class, ml_query_class, prop_names, 
                                     props_corr_dict, extensiveness_dict, newlist[0])
                 total_score = 0
@@ -673,7 +605,7 @@ def similarity_assessment(request):
                         xml_fragment_text = '{0}{1}{2}'.format(xml_legend_template_part1, lcml_snippet, xml_legend_template_part2)
                     try:
                         xml_root = etree.fromstring(xml_fragment_text)
-                    except Exception, e:
+                    except Exception as e:
                         dd = {'error':'invalid_snippet'}
                     qcm = LCCS3Class()
                     qcm.xml_text = xml_fragment_text
