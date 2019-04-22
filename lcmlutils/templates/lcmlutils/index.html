@@ -566,6 +566,7 @@
               var div_with_scores = $('<div>')
                                       .addClass('btn-group')
                                       .attr('data-toggle','buttons');
+              var scaling = Math.max.apply(null,Object.values(scores_row));
               for(var idx = 0; idx < this.columns.length+1; idx++) {
                   var col_id = null;
                   var v = null;
@@ -574,6 +575,8 @@
                   {
                       col_id = this.columns[idx];
                       v = scores_row[col_id];
+                      if (scaling>100)
+                        v = v/scaling*100;
                       vdec = parseFloat(Math.round(v*100)/100).toFixed(0);
                   }
                   else
@@ -582,6 +585,8 @@
                   }
                   var crow_style = 'text-align:right;';
                   var is_max = Math.max.apply(null, scores_ll)==v;
+                  if (scaling>100)
+                    is_max = Math.max.apply(null, scores_ll)==v*scaling/100;
                   var is_active = false;
                   if (is_max && max_assigned==false && v>=this.score_threshold) {
                       crow_style = crow_style+'color:darkgreen;';
