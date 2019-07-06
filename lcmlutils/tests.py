@@ -27,7 +27,12 @@ comparisons_dd = {
 		"class1":"sylhet21",
 		"class2":"seea7",
 		"notes":"sal vs mangroves"
-	}
+	},
+"coxfmp_seea7": {
+        "class1":"coxs-fmp",
+        "class2":"seea7",
+        "notes":"sal vs mangroves"
+    }
 }
 
 namespaces = {'xs':'http://www.w3.org/2001/XMLSchema',

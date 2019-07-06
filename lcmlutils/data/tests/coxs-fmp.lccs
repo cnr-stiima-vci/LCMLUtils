@@ -1,0 +1,121 @@
+<LC_Legend xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="1" lccs_sort="0" uuid="852ea230-e00e-11e8-88f7-68f728332aa7" xsi:noNamespaceSchemaLocation="New Legend SEEA.xsd" xsi:type="LC_Legend">
+   <name>New Legend 1</name>
+   <description>Describe the legend</description>
+   <elements>
+      <LC_LandCoverClass id="B1" uuid="8aa5e095-ea78-11e5-a049-780cb82883be" xsi:type="LC_LandCoverClass">
+         <name>Mangrove Plantation</name>
+         <description>Describe the land cover class</description>
+         <map_code>FMp</map_code>
+         <elements>
+            <LC_Characteristic id="2C5" uuid="6cb7e220-8c1f-11e0-82ab-000cf147c442" xsi:type="LC_GeographicalAspects">
+               <name>Geographical Aspects</name>
+               <description>Describe the geographical aspects</description>
+               <type>Coastal Area</type>
+            </LC_Characteristic>
+            <LC_HorizontalPattern id="B2" uuid="8aa5e094-ea78-11e5-a049-780cb82883be" xsi:type="LC_HorizontalPattern">
+               <name>Horizontal Pattern 1</name>
+               <description>Describe the horizontal pattern</description>
+               <elements>
+                  <LC_Stratum id="2C7" ontop="0" uuid="589801c0-6c71-11e6-adc0-28e3478d86fa" xsi:type="LC_Stratum">
+                     <name>Stratum 1</name>
+                     <description>Vegetation 1</description>
+                     <elements>
+                        <LC_LandCoverElement id="2C8" uuid="5cc90141-6c71-11e6-adc0-28e3478d86fa" xsi:type="LC_Trees">
+                           <name>Trees</name>
+                           <description>Describe a vegetation element of trees type</description>
+                           <elements>
+                              <LC_Characteristic id="2C9" uuid="27a47295-43af-11de-bbd4-000cf147c442" xsi:type="LC_FloristicAspect">
+                                 <name>Floristic Aspect</name>
+                                 <description>Describe the floristic aspect</description>
+                                 <elements>
+                                    <LC_Characteristic id="2CA" uuid="6a8f4fa0-6c71-11e6-adc0-28e3478d86fa" xsi:type="LC_FloristicAspectSpecies">
+                                       <name>Floristic Aspect Species</name>
+                                       <description>Describe the floristic aspect species</description>
+                                       <species_name>Keora, Baen, Gewa</species_name>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                              <LC_Characteristic id="2CB" uuid="27a47287-43af-11de-bbd4-000cf147c442" xsi:type="LC_CultivatedAndManagedVegetation">
+                                 <name>Cultivated And Managed Vegetation</name>
+                                 <description>Describe the cultivated and managed vegetation</description>
+                                 <elements>
+                                    <LC_Characteristic id="2CC" uuid="27a4728b-43af-11de-bbd4-000cf147c442" xsi:type="LC_ForestPlantation">
+                                       <name>Forest Plantation</name>
+                                       <description>Describe the forest plantation</description>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Mandatory</presence_type>
+                           <cover max="100.0" min="30.0"/>
+                           <LC_WoodyGrowthLeafPhenology id="2E4" uuid="e3aec874-3572-11de-a238-000cf147c442" xsi:type="LC_WoodyGrowthLeafPhenology">
+                              <name>Woody Growth Leaf Phenology</name>
+                              <description>Contains the elements of Woody Growth Leaf Phenology</description>
+                              <elements>
+                                 <LC_WoodyLeafPhenology id="2E5" uuid="5cc90140-6c71-11e6-adc0-28e3478d86fa" xsi:type="LC_Evergreen">
+                                    <name>Evergreen</name>
+                                    <description>Describe an Evergreen leaf phenology element</description>
+                                 </LC_WoodyLeafPhenology>
+                              </elements>
+                           </LC_WoodyGrowthLeafPhenology>
+                           <LC_WoodyGrowthLeafType id="2E6" uuid="e3aec875-3572-11de-a238-000cf147c442" xsi:type="LC_WoodyGrowthLeafType">
+                              <name>Woody Growth Leaf Type</name>
+                              <description>Contains the elements of Woody Growth Leaf Type</description>
+                              <elements>
+                                 <LC_WoodyLeafType id="2E7" uuid="5cc69040-6c71-11e6-adc0-28e3478d86fa" xsi:type="LC_Broadleaved">
+                                    <name>Broadleaved</name>
+                                    <description>Describe a Broadleaved type element</description>
+                                 </LC_WoodyLeafType>
+                              </elements>
+                           </LC_WoodyGrowthLeafType>
+                           <height max="45.0" min="5.0"/>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Mandatory</presence_type>
+                  </LC_Stratum>
+                  <LC_Stratum id="2CD" ontop="0" uuid="61aa3df1-6c71-11e6-adc0-28e3478d86fa" xsi:type="LC_Stratum">
+                     <name>Stratum 2</name>
+                     <description>Abiotic surface 2</description>
+                     <elements>
+                        <LC_LandCoverElement id="2CE" uuid="61aa3df0-6c71-11e6-adc0-28e3478d86fa" xsi:type="LC_WaterBody">
+                           <name>Water Body</name>
+                           <description>Describe a water body surface element</description>
+                           <elements>
+                              <LC_Characteristic id="2CF" uuid="27a2ebe2-43af-11de-bbd4-000cf147c442" xsi:type="LC_WaterSalinity">
+                                 <name>Water Salinity</name>
+                                 <description>Describe the water salinity characteristic</description>
+                                 <type>Brackish</type>
+                              </LC_Characteristic>
+                              <LC_Characteristic id="2D0" uuid="27a2ebe1-43af-11de-bbd4-000cf147c442" xsi:type="LC_Artificiality">
+                                 <name>Artificiality</name>
+                                 <description>Describe the artificiality characteristic</description>
+                                 <type>Natural</type>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Mandatory</presence_type>
+                           <periodic_variation id="2E8" uuid="860747b0-a39a-11e0-bd59-000cf147c442" xsi:type="LC_PeriodicVariations">
+                              <name>Periodic Variations</name>
+                              <description>Contains the elements of Periodic Variation</description>
+                              <elements>
+                                 <LC_PeriodicVariation id="2E9" uuid="61a7f400-6c71-11e6-adc0-28e3478d86fa" xsi:type="LC_PeriodicVariation">
+                                    <name>Periodic Variation</name>
+                                    <description>Describe a periodic variation element</description>
+                                    <persistence_units>Hours</persistence_units>
+                                    <period_type>Tidal</period_type>
+                                    <persistence_period max="6.0" min="1.0"/>
+                                    <period_description/>
+                                 </LC_PeriodicVariation>
+                              </elements>
+                           </periodic_variation>
+                           <dynamics>Flowing</dynamics>
+                           <position>Above Surface</position>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Mandatory</presence_type>
+                  </LC_Stratum>
+               </elements>
+            </LC_HorizontalPattern>
+         </elements>
+      </LC_LandCoverClass>
+   </elements>
+</LC_Legend>
