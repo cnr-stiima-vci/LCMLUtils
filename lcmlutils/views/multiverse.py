@@ -22,7 +22,16 @@ def generate_valid_permutations(mandatory_list, optional_list, exclusive_groups,
     # this is the result
     #print(ap_perm)
     # now extending the list with optional elements, creating pseudo-groups
-    optional_group = [(el,) for el in optional_list]
+    optional_group = []
+    if greedy_mode:
+        ol = copy.copy(optional_list)
+        nel = len(ol)
+        for cnt in range(nel):
+            n = cnt+1
+            o_combs = itertools.combinations(ol,n)
+            optional_group.extend(o_combs)
+    else:
+        optional_group = [(el,) for el in optional_list]
     # since these elements are optional, they can be matched as last resort only
     pc =  list(itertools.product(ap_perm, optional_group))
     #print(pc)

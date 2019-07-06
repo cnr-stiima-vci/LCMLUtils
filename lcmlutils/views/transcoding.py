@@ -7,6 +7,8 @@ from lxml import etree
 from lxml import objectify
 import pprint
 
+from pdb import set_trace as _breakpoint
+
 IGNORED_PROPS_LIST = ['name', 'description', 'elements',]
 
 namespaces = {'xs':'http://www.w3.org/2001/XMLSchema',
@@ -31,6 +33,13 @@ def transcode_lccs3_classes(xml_text):
             el_dd['properties'] = {}
             el_stratum = el.getparent().getparent()
             pt_stratum = el_stratum.find('presence_type').text or 'Mandatory'
+            pt_stratum_lcs = el_stratum.findall("./elements/LC_LandCoverElement")
+            siblings_set = set()
+            for lce in pt_stratum_lcs:
+                siblings_set.add(lce.get('uuid'))
+            siblings_set.remove(el_dd['element_uuid'])
+            el_dd['sibling_elements_uuid'] = siblings_set
+            el_dd['parent_stratum_presence_type'] = pt_stratum
             for elch in el.getchildren():
                 tag = elch.tag
                 print('handling property {0}...'.format(tag))
