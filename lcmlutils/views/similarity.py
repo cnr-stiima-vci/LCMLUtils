@@ -186,9 +186,10 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
         matching_pairs = []
         query_class_names = map(lambda i: orig_query_class_names[i], permutation)
         query_class_uuids = map(lambda i: orig_query_class_uuids[i], permutation)
+        query_class_props = map(lambda i: query_class[i]['properties'], permutation)
         ref_class_names = copy.copy(orig_ref_class_names)
         ref_class_uuids = copy.copy(orig_ref_class_uuids)
-        ref_class_positions = range(len(ref_class_names))
+        ref_class_positions = list(range(len(ref_class_names)))
         #print('permutation: {0}'.format(query_class_names))
         qidx = 0
         for query_elem in query_class_names:
@@ -196,28 +197,31 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
             scores = [dd.get(query_elem,{}).get(rcn, default_value) for rcn in ref_class_names]
             pprint.pprint('vs {0}'.format(ref_class_names))
             pprint.pprint(scores)
-            try:
-                max_score = max(scores)
-                phi_score = sum(scores)/float(len(scores))
-                phi_index = scores.index(max_score)
-                ref_class_pos = ref_class_positions[phi_index]
-                portioning_rc = ref_class[ref_class_pos].get('properties').get('portioning',{'attributes':{'min':100}}).get('attributes').get('min')
-                phi_scores.append(phi_score * portioning_rc/100.0)
-                qe = [qce for qce in query_class if qce.get('element_uuid')==mp['qe_uuid']][0] # <----
-                qe_props = qe.get('properties')
-                matching_pairs.append({'qe_uuid': query_class_uuids[qidx], 'qe_props':qe_props, 're_uuid': ref_class_uuids[phi_index]})
-                del ref_class_names[phi_index]
-                del ref_class_uuids[phi_index]
-                del ref_class_positions[phi_index]
-                #eps_score = phi_score * weights_mapping_dict[ref_class_cnt][phi_index]
-                #eps_scores.append(eps_score)
-                cnt1+=1
-                is_seq_sy_elem = ref_class[ref_class_pos].get('properties').get('sequential_temporal_relationship',{'attributes':{'type':None}}).get('attributes').get('type')=='Sequential Same Year'
-                if is_seq_sy_elem:
-                    query_class_cnt = len(phi_scores)
-                    break
-            except Exception as e:
-                pass
+            if len(scores)>0:
+                try:
+                    max_score = max(scores)
+                    phi_score = sum(scores)/float(len(scores))
+                    phi_index = scores.index(max_score)
+                    ref_class_pos = ref_class_positions[phi_index]
+                    portioning_rc = ref_class[ref_class_pos].get('properties').get('portioning',{'attributes':{'min':100}}).get('attributes').get('min')
+                    phi_scores.append(phi_score * portioning_rc/100.0)
+                    qe_props = list(query_class_props)[qidx]
+                    matching_pairs.append({'qe_uuid': list(query_class_uuids)[qidx], 'qe_props':qe_props, 're_uuid': ref_class_uuids[phi_index]})
+                    del ref_class_names[phi_index]
+                    del ref_class_uuids[phi_index]
+                    del ref_class_positions[phi_index]
+                    #eps_score = phi_score * weights_mapping_dict[ref_class_cnt][phi_index]
+                    #eps_scores.append(eps_score)
+                    cnt1+=1
+                    is_seq_sy_elem = ref_class[ref_class_pos].get('properties').get('sequential_temporal_relationship',{'attributes':{'type':None}}).get('attributes').get('type')=='Sequential Same Year'
+                    if is_seq_sy_elem:
+                        query_class_cnt = len(phi_scores)
+                        break
+                except:
+                    err = sys.exc_info()[0]
+                    pass
+            else:
+                pprint.pprint("no matches")
             qidx+=1
         #print('ref class: {0}'.format(ref_class))
         #print('query class: {0}'.format(query_class))
