@@ -104,11 +104,11 @@ def get_flat_list(l):
     return(flat_list)
 
 class SimilarityTests(TestCase):
-    '''
+    
     def test_similarity_01(self):
        print("testing with utility functions")
        assess_similarity("sylhet21_seea7")
-    
+    '''
     def test_pt_01(self):
         print("presence_type typology extraction #1 (sylhet14)")
         transcoded = load_and_trancode_class("sylhet14")

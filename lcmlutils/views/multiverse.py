@@ -1,5 +1,6 @@
 import itertools
 import copy
+import pprint
 
 def generate_valid_permutations(mandatory_list, optional_list, exclusive_groups, greedy_mode = False):
     # elements in exclusive groups are mandatory in an exclusive way, one for each group and then permutated
@@ -42,3 +43,30 @@ def generate_valid_permutations(mandatory_list, optional_list, exclusive_groups,
     # now all permutations have been computed
     return permutations
     #return pc
+
+
+def get_presence_type_groups(transcoded_class):
+    tc = transcoded_class
+    groups = {}
+    processed_exclusive = set()
+    group_types = ['Mandatory','Optional','Exclusive']
+    for pt in group_types:
+        pprint.pprint(pt)
+        els = [el['element_uuid'] for el in tc if el['properties']['presence_type']['attributes']['value'] == pt]
+        if pt == 'Exclusive':
+            groups[pt] = list()
+            pprint.pprint(els)
+            for uuid in els:
+                eg = []
+                if uuid not in processed_exclusive:
+                    eg = [uuid]
+                    processed_exclusive.add(uuid)
+                    el = [el for el in tc if el['element_uuid'] == uuid][0]
+                    eg.extend(list(el['sibling_elements_uuid']))
+                    for uuid in list(el['sibling_elements_uuid']):
+                        processed_exclusive.add(uuid)
+                    groups[pt].append(eg)
+        else:
+            pprint.pprint(els)
+            groups[pt] = list(els)
+    return(groups)

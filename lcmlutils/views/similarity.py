@@ -22,6 +22,7 @@ from django.views.decorators.csrf import csrf_exempt
 from lcmlutils.settings import DATA_PATH, BFIS_SERVICE_PORT
 from lcmlutils.models import LCCS3Class, LCCS3Legend
 from lcmlutils.views.transcoding import transcode_lccs3_classes, namespaces
+from lcmlutils.views.multiverse import generate_valid_permutations, get_presence_type_groups
 
 biotic_sim_dict = {}
 extensiveness_dict = {}
@@ -165,6 +166,115 @@ def compute_extensiveness(transcoded_class):
     print("extensiveness_length: {0}".format(extensiveness_length))
     return extensiveness_length
 
+
+def create_class_dict(transcoded_class):
+    dd = {}
+    for elem in transcoded_class:
+        dd[elem.get('element_uuid')] = elem
+    return dd
+
+def select_partial_class(transcoded_class_dict, uuids):
+    dd = transcoded_class_dict
+    partial_class = []
+    for uuid in uuids:
+        if uuid in dd.keys():
+            partial_class.append(dd[uuid])
+    return partial_class
+
+def compute_phase1_with_multiverse(ref_class, query_class, names, dd, ed):
+    ref_class_cnt = compute_extensiveness(ref_class)
+    cnt1 = 0
+    final_score = 0
+    default_value = 1
+    accepted_pt = ['Mandatory','Exclusive'] #, 'Temporal Sequence Depending'
+    orig_ref_class_names = [rec.get('element_type') for rec in ref_class]
+    orig_ref_class_uuids = [rec.get('element_uuid') for rec in ref_class]
+    orig_ref_class_props = [rec.get('properties') for rec in ref_class]
+    groups = get_presence_type_groups(query_class)
+    mg = groups['Mandatory']
+    og = groups['Optional']
+    eg = groups['Exclusive']
+    permutation_scores = []
+    tqcd = create_class_dict(query_class)
+    permutations = generate_valid_permutations(mg, og, eg, greedy_mode = True)
+    
+    for permutation in permutations:
+        partial_qc = select_partial_class(tqcd, permutation)
+        query_class_cnt = compute_extensiveness(partial_qc)
+        orig_query_class_names = [qe.get('element_type') for qe in partial_qc]
+        orig_query_class_uuids = [qe.get('element_uuid') for qe in partial_qc]
+        
+        phi_scores = []
+        eps_scores = []
+        matching_pairs = []
+        query_class_names = copy.copy(orig_query_class_names)
+        query_class_uuids = copy.copy(orig_query_class_uuids)
+        query_class_props = [qe.get('properties') for qe in partial_qc]
+        ref_class_names = copy.copy(orig_ref_class_names)
+        ref_class_uuids = copy.copy(orig_ref_class_uuids)
+        ref_class_props = copy.copy(orig_ref_class_props)
+        ref_class_positions = list(range(len(ref_class_names)))
+
+        qidx = 0
+        for query_elem in query_class_names:
+            pprint.pprint(query_elem)
+            scores = [dd.get(query_elem,{}).get(rcn, default_value) for rcn in ref_class_names]
+            pprint.pprint('vs {0}'.format(ref_class_names))
+            pprint.pprint(scores)
+            if len(scores)>0:
+                try:
+                    max_score = max(scores)
+                    phi_score = sum(scores)/float(len(scores))
+                    phi_index = scores.index(max_score)
+                    ref_class_pos = ref_class_positions[phi_index]
+                    portioning_rc = ref_class[ref_class_pos].get('properties').get('portioning',{'attributes':{'min':100}}).get('attributes').get('min')
+                    phi_scores.append(phi_score * portioning_rc/100.0)
+                    qe_props = list(query_class_props)[qidx]
+                    matching_pairs.append(
+                        {
+                            'qe_uuid': list(query_class_uuids)[qidx], 
+                            'qe_type': query_elem,
+                            'qe_props':qe_props, 
+                            're_uuid': ref_class_uuids[phi_index],
+                            're_type': ref_class_names[phi_index],
+                            're_props':ref_class_props[phi_index]
+                        })
+                    del ref_class_names[phi_index]
+                    del ref_class_uuids[phi_index]
+                    del ref_class_positions[phi_index]
+                    #eps_score = phi_score * weights_mapping_dict[ref_class_cnt][phi_index]
+                    #eps_scores.append(eps_score)
+                    cnt1+=1
+                    is_seq_sy_elem = ref_class[ref_class_pos].get('properties').get('sequential_temporal_relationship',{'attributes':{'type':None}}).get('attributes').get('type')=='Sequential Same Year'
+                    if is_seq_sy_elem:
+                        query_class_cnt = len(phi_scores)
+                        break
+                except:
+                    err = sys.exc_info()[0]
+                    pass
+            else:
+                pprint.pprint("no matches")
+            qidx+=1
+            print(phi_scores)
+        
+        phi_score = mean(phi_scores) #sum(phi_scores) 
+        print('phi score: {0}'.format(phi_score))
+        #extensiveness_weight = ed[query_class_cnt][ref_class_cnt]
+        print("ed:")
+        print(ed)
+        extensiveness_weight = ed.get(query_class_cnt,{}).get(ref_class_cnt,1) or 1
+        print('extensiveness {0} vs {1} = {2}'.format(ref_class_cnt, query_class_cnt, extensiveness_weight))
+        psi_score = phi_score * extensiveness_weight
+        final_score = psi_score
+        print('final_score: {0}'.format(final_score))
+        permutation_scores.append({
+            'query_class_names': query_class_names,
+            'permutation': permutation,
+            'score': final_score,
+            'matching_pairs': matching_pairs,
+            'partial_qc':partial_qc})
+    return permutation_scores
+
 def compute_phase1_ml(ref_class, query_class, names, dd, ed):
     ref_class_cnt = compute_extensiveness(ref_class)
     query_class_cnt = compute_extensiveness(query_class)
@@ -294,14 +404,17 @@ def compute_phase2_score(ref_class, query_class, names, dd, ed, phase1_meta={}):
     qc_elems = query_class
     for mp in matching_pairs:
         print('matching pair {0}'.format(mp))
-        re = [rce for rce in refc_elems if rce.get('element_uuid')==mp['re_uuid']][0]
-        re_props = re.get('properties')
-        ret = re.get('element_type')
+        #re = [rce for rce in refc_elems if rce.get('element_uuid')==mp['re_uuid']][0]
+        re_props = mp.get('re_props')
+        ret = mp.get('re_type')
         pprint.pprint(ret)
 
-        qe = [qce for qce in qc_elems if qce.get('element_uuid')==mp['qe_uuid']][0]
-        qe_props = qe.get('properties')
-        qet = qe.get('element_type')
+        #qe = [qce for qce in qc_elems if qce.get('element_uuid')==mp['qe_uuid']][0]
+        #qe_props = qe.get('properties')
+        #qet = qe.get('element_type')
+        qe_props = mp.get('qe_props')
+        qet = mp.get('qe_type')
+        
         pprint.pprint(qet)
         #_breakpoint()
         for pn in qe_props.keys():
@@ -463,8 +576,10 @@ def test():
         ref_class = cl.get('elements')
         #score_phase1 = compute_phase1_score(ref_class, query_class, element_names, 
         #                    elements_corr_dict, extensiveness_dict)
-        permutation_scores = compute_phase1_ml(ref_class, query_class, element_names, 
+        permutation_scores = compute_phase1_with_multiverse(ref_class, query_class, element_names, 
                             elements_corr_dict, extensiveness_dict)
+        #permutation_scores = compute_phase1_ml(ref_class, query_class, element_names, 
+        #                    elements_corr_dict, extensiveness_dict)
         newlist = sorted(permutation_scores,key=itemgetter('score'), reverse=True)
         score_phase1 = newlist[0]['score']
         print('score phase1: {0}'.format(score_phase1))
@@ -513,14 +628,17 @@ def perform_assessment(wl, qcm):
                 ref_class = cl.get('elements')
                 #score_phase1 = compute_phase1_score(ref_class, query_class, element_names, 
                 #                    elements_corr_dict, extensiveness_dict)
-                permutation_scores = compute_phase1_ml(ref_class, query_class, element_names, 
-                                    elements_corr_dict, extensiveness_dict)
+                permutation_scores = compute_phase1_with_multiverse(ref_class, query_class, element_names, 
+                            elements_corr_dict, extensiveness_dict)
+                #permutation_scores = compute_phase1_ml(ref_class, query_class, element_names, 
+                #                    elements_corr_dict, extensiveness_dict)
                 newlist = sorted(permutation_scores,key=itemgetter('score'), reverse=True)
                 score_phase1 = newlist[0]['score']
                 matching_pairs = newlist[0]['matching_pairs']
                 pprint.pprint('score phase1: {0}'.format(score_phase1))
-                ml_query_class = list(map(lambda i: query_class[i], newlist[0]['permutation']))
+                #ml_query_class = list(map(lambda i: query_class[i], newlist[0]['permutation']))
                 #ml_query_class = copy.copy(query_class[newlist[0]['permutation'][0]])
+                ml_query_class = newlist[0]['partial_qc']
                 score_phase2 = compute_phase2_score(ref_class, ml_query_class, prop_names, 
                                     props_corr_dict, extensiveness_dict, newlist[0])
                 total_score = 0
