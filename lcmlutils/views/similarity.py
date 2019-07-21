@@ -434,7 +434,7 @@ def compute_phase2_score(ref_class, query_class, names, dd, ed, phase1_meta={}):
                     ref_props_cnt += 1
                     qp = qe_props[pn]
                     rp = re_props[pn]
-                    if pn in props_mapping.keys() and ret==qet:
+                    if pn in props_mapping.keys(): # and ret==qet:
                         pmap = props_mapping.get(pn)
                         qpmap = pmap.get(qet, qet) or qet
                         rpmap = pmap.get(ret, ret) or ret
@@ -600,8 +600,9 @@ def get_legend_description(doc_legend):
         dd['names_dict'][lc.text] = name
     return dd
 
-def perform_assessment(wl, qcm):
+def perform_assessment(wl, qcm, options = {}):
     dd = {}
+    similarity_level = options.get('similarity_level') or 'elements+props'
     doc = etree.fromstring(wl.xml_text)
     #lc_classes = doc.findall('elements/LC_LandCoverClass/map_code', namespaces)
     #dd['working_classes'] = [lc.text for lc in lc_classes]
@@ -639,14 +640,17 @@ def perform_assessment(wl, qcm):
                 #ml_query_class = list(map(lambda i: query_class[i], newlist[0]['permutation']))
                 #ml_query_class = copy.copy(query_class[newlist[0]['permutation'][0]])
                 ml_query_class = newlist[0]['partial_qc']
-                score_phase2 = compute_phase2_score(ref_class, ml_query_class, prop_names, 
-                                    props_corr_dict, extensiveness_dict, newlist[0])
                 total_score = 0
-                if score_phase2:
-                    pprint.pprint('score phase2: {0}'.format(score_phase2))
-                    total_score = score_phase1 * 0.6 + score_phase2 * 0.4
+                if similarity_level=='elements+props':
+                    score_phase2 = compute_phase2_score(ref_class, ml_query_class, prop_names, 
+                                        props_corr_dict, extensiveness_dict, newlist[0])
+                    if score_phase2:
+                        pprint.pprint('score phase2: {0}'.format(score_phase2))
+                        total_score = score_phase1 * 0.6 + score_phase2 * 0.4
+                    else:
+                        pprint.pprint('no computation possible for phase2, skipping')
+                        total_score = score_phase1
                 else:
-                    pprint.pprint('no computation possible for phase2, skipping')
                     total_score = score_phase1
                 #if total_score>100: # FIXME: usually happens with multiple basic elemenets in horizontal patterns
                 #    total_score = 100.0
@@ -695,6 +699,7 @@ def similarity_assessment(request):
         lcml_class_name = params.get('lcml_class_name')
         lcml_query_legend_name = params.get('query_legend_name')
         lcml_snippet = params.get('lcml_class')
+        advanced_options = params.get('advanced_options') or {}
         wl = None
         qcs = None
         if working_legend_name:
@@ -712,7 +717,7 @@ def similarity_assessment(request):
             wl = LCCS3Legend.objects.filter(active = True).first()
         if lcml_class_name:
             qcm = LCCS3Class.objects.filter(name = lcml_class_name).first()
-            dd = perform_assessment(wl, qcm)
+            dd = perform_assessment(wl, qcm, advanced_options)
         else:
             if lcml_query_legend_name:
                 qcm = LCCS3Class()
@@ -732,8 +737,8 @@ def similarity_assessment(request):
                     qcm = LCCS3Class()
                     qcm.xml_text = xml_fragment_text
                     pprint.pprint(xml_fragment_text)
-                    dd = perform_assessment(wl, qcm)
-        dd = perform_assessment(wl, qcm)
+                    dd = perform_assessment(wl, qcm, advanced_options)
+        dd = perform_assessment(wl, qcm, advanced_options)
         invdd = invert_payload_order(dd)
         pprint.pprint(invdd)
         pprint.pprint("with params:")

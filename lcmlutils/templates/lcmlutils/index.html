@@ -150,11 +150,22 @@
               <select id="query-legend-combo-list" class="legends-combo-list">
               </select>
             </div>
+          </div>
+          <div class="row">
             <div class="col-md-1">
               Similarity threshold
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
               <input id="similarity-threshold" type="number" value="50" placeholder="0 to 100" step="5" min="5" max="100">
+            </div>
+            <div class="col-md-1">
+              Similarity level
+            </div>
+            <div class="col-md-2">
+              <select id="similarity-level-combo-list" class="similarity-combo-list">
+                <option value="basic-elements">Basic Elements only</option>
+                <option value="elements+props">Elements & Props</option>
+              </select>
             </div>
             <div class="col-md-2">
               <button type="button" id="query-btn" class="btn btn-primary">Query/Remap...</button>
@@ -705,13 +716,17 @@
     var wln = $("#ref-legend-combo-list option:selected").text();
     var qln = $("#query-legend-combo-list option:selected").text();
     var similarity_threshold = parseInt($('#similarity-threshold').val());
+    var similarity_level = $('#similarity-level-combo-list option:selected').val();
     var json_config = 
       {
         "similarity_mode":"FULL_PROTOTYPE", 
         "similarity_threshold": similarity_threshold, 
         "preview_mode":true,
         "working_legend_name": wln,
-        "query_legend_name": qln
+        "query_legend_name": qln,
+        "advanced_options": {
+          "similarity_level": similarity_level
+        }
       };
     $.ajax(
     {
