@@ -1,0 +1,114 @@
+<LC_Legend xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="1" lccs_sort="0" uuid="852ea230-e00e-11e8-88f7-68f728332aa7" xsi:noNamespaceSchemaLocation="New Legend SEEA.xsd" xsi:type="LC_Legend">
+   <name>New Legend 1</name>
+   <description>Describe the legend</description>
+   <elements>
+        <LC_LandCoverClass id="17" uuid="13c694a4-ea51-11e5-a049-780cb82883be" xsi:type="LC_LandCoverClass">
+         <name>Forest Plantations</name>
+         <description>Describe the land cover class</description>
+         <map_code>FP</map_code>
+         <elements>
+            <LC_HorizontalPattern id="18" uuid="13c694a3-ea51-11e5-a049-780cb82883be" xsi:type="LC_HorizontalPattern">
+               <name>Horizontal Pattern 1</name>
+               <description>Describe the horizontal pattern</description>
+               <elements>
+                  <LC_Stratum id="19" ontop="0" uuid="13c694a2-ea51-11e5-a049-780cb82883be" xsi:type="LC_Stratum">
+                     <name>Stratum 1</name>
+                     <description>Vegetation 1</description>
+                     <elements>
+                        <LC_LandCoverElement id="1A" uuid="13c694a1-ea51-11e5-a049-780cb82883be" xsi:type="LC_Trees">
+                           <name>Trees</name>
+                           <description>Describe a vegetation element of trees type</description>
+                           <elements>
+                              <LC_Characteristic id="231" uuid="27a47295-43af-11de-bbd4-000cf147c442" xsi:type="LC_FloristicAspect">
+                                 <name>Floristic Aspect</name>
+                                 <description>Describe the floristic aspect</description>
+                                 <elements>
+                                    <LC_Characteristic id="232" uuid="3060a150-67a6-11e6-bcd4-28e3478d86fa" xsi:type="LC_FloristicAspectSpecies">
+                                       <name>Floristic Aspect Species</name>
+                                       <description>Describe the floristic aspect species</description>
+                                       <species_name>Teak, Gamar, Mehgoni, Akashmoni, Menjium</species_name>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                              <LC_Characteristic id="22C" uuid="27a47287-43af-11de-bbd4-000cf147c442" xsi:type="LC_CultivatedAndManagedVegetation">
+                                 <name>Cultivated And Managed Vegetation</name>
+                                 <description>Describe the cultivated and managed vegetation</description>
+                                 <elements>
+                                    <LC_Characteristic id="22E" uuid="27a4728b-43af-11de-bbd4-000cf147c442" xsi:type="LC_ForestPlantation">
+                                       <name>Forest Plantation</name>
+                                       <description>Describe the forest plantation</description>
+                                    </LC_Characteristic>
+                                    <LC_Characteristic id="22F" uuid="27a4728e-43af-11de-bbd4-000cf147c442" xsi:type="LC_PlantSpreadingGeometry">
+                                       <name>Plant Spreading Geometry</name>
+                                       <description>Describe the plant spreading geometry</description>
+                                       <type>Regular</type>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Mandatory</presence_type>
+                           <cover max="100.0" min="10.0"/>
+                           <LC_WoodyGrowthLeafPhenology id="227" uuid="e3aec874-3572-11de-a238-000cf147c442" xsi:type="LC_WoodyGrowthLeafPhenology">
+                              <name>Woody Growth Leaf Phenology</name>
+                              <description>Contains the elements of Woody Growth Leaf Phenology</description>
+                              <elements>
+                                 <LC_WoodyLeafPhenology id="235" uuid="1d74ebe0-67a7-11e6-bcd4-28e3478d86fa" xsi:type="LC_Deciduous">
+                                    <name>Deciduous</name>
+                                    <description>Describe a Deciduous leaf phenology element</description>
+                                 </LC_WoodyLeafPhenology>
+                                 <LC_WoodyLeafPhenology id="300" uuid="6880cab0-6ed1-11e6-878e-28e3478d86fa" xsi:type="LC_Evergreen">
+                                    <name>Evergreen</name>
+                                    <description>Describe an Evergreen leaf phenology element</description>
+                                 </LC_WoodyLeafPhenology>
+                              </elements>
+                           </LC_WoodyGrowthLeafPhenology>
+                           <LC_WoodyGrowthLeafType id="225" uuid="e3aec875-3572-11de-a238-000cf147c442" xsi:type="LC_WoodyGrowthLeafType">
+                              <name>Woody Growth Leaf Type</name>
+                              <description>Contains the elements of Woody Growth Leaf Type</description>
+                              <elements>
+                                 <LC_WoodyLeafType id="226" uuid="f0be37f0-6788-11e6-b806-28e3478d86fa" xsi:type="LC_Broadleaved">
+                                    <name>Broadleaved</name>
+                                    <description>Describe a Broadleaved type element</description>
+                                 </LC_WoodyLeafType>
+                              </elements>
+                           </LC_WoodyGrowthLeafType>
+                           <height max="45.0" min="5.0"/>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Mandatory</presence_type>
+                  </LC_Stratum>
+                  <LC_Stratum id="2FB" ontop="0" uuid="a7996310-6ecc-11e6-878e-28e3478d86fa" xsi:type="LC_Stratum">
+                     <name>Stratum 2</name>
+                     <description>Vegetation 2</description>
+                     <elements>
+                        <LC_LandCoverElement id="2FC" uuid="b1e35bf0-6ecc-11e6-878e-28e3478d86fa" xsi:type="LC_HerbaceousGrowthForms">
+                           <name>Herbaceous growth forms</name>
+                           <description>Describe a vegetation element of herbaceous growth form type</description>
+                           <elements>
+                              <LC_Characteristic id="2FD" uuid="27a47287-43af-11de-bbd4-000cf147c442" xsi:type="LC_CultivatedAndManagedVegetation">
+                                 <name>Cultivated And Managed Vegetation</name>
+                                 <description>Describe the cultivated and managed vegetation</description>
+                              </LC_Characteristic>
+                              <LC_Characteristic id="2FE" uuid="27a47295-43af-11de-bbd4-000cf147c442" xsi:type="LC_FloristicAspect">
+                                 <name>Floristic Aspect</name>
+                                 <description>Describe the floristic aspect</description>
+                                 <elements>
+                                    <LC_Characteristic id="2FF" uuid="d8e0e560-6ecc-11e6-878e-28e3478d86fa" xsi:type="LC_FloristicAspectSpecies">
+                                       <name>Floristic Aspect Species</name>
+                                       <description>Describe the floristic aspect species</description>
+                                       <species_name>Vegetables</species_name>
+                                    </LC_Characteristic>
+                                 </elements>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Mandatory</presence_type>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Optional</presence_type>
+                  </LC_Stratum>
+               </elements>
+            </LC_HorizontalPattern>
+         </elements>
+        </LC_LandCoverClass>
+    </elements>
+</LC_Legend>

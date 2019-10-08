@@ -166,6 +166,23 @@ def compute_extensiveness(transcoded_class):
     print("extensiveness_length: {0}".format(extensiveness_length))
     return extensiveness_length
 
+def apply_extensiveness_penalty(starting_score, ref_class, matching_pairs):
+    # apply penalty for mandatory elements in the reference class that do not appear in any matching pair
+    new_score = starting_score
+    mandatory_elems_total = count_props_with_name_and_value_in_transcoded_class(ref_class, 'presence_type', 'Mandatory')
+    if mandatory_elems_total:
+        mandatory_matched = 0
+        for mp in matching_pairs:
+            ptval = mp['re_props']['presence_type']['attributes']['value']
+            if ptval == 'Mandatory':
+                mandatory_matched+=1
+        missing_count = mandatory_elems_total - mandatory_matched
+        if missing_count>0:
+            perc = missing_count/float(mandatory_elems_total)
+            perc = perc*0.5 #maximum penalty is half the computed extensiveness
+            new_score = new_score*(1.0 - perc)
+    return new_score
+
 
 def create_class_dict(transcoded_class):
     dd = {}
@@ -224,7 +241,8 @@ def compute_phase1_with_multiverse(ref_class, query_class, names, dd, ed):
             if len(scores)>0:
                 try:
                     max_score = max(scores)
-                    phi_score = sum(scores)/float(len(scores))
+                    #phi_score = sum(scores)/float(len(scores))
+                    phi_score = max_score
                     phi_index = scores.index(max_score)
                     ref_class_pos = ref_class_positions[phi_index]
                     portioning_rc = ref_class[ref_class_pos].get('properties').get('portioning',{'attributes':{'min':100}}).get('attributes').get('min')
@@ -264,7 +282,9 @@ def compute_phase1_with_multiverse(ref_class, query_class, names, dd, ed):
         print(ed)
         extensiveness_weight = ed.get(query_class_cnt,{}).get(ref_class_cnt,1) or 1
         print('extensiveness {0} vs {1} = {2}'.format(ref_class_cnt, query_class_cnt, extensiveness_weight))
-        psi_score = phi_score * extensiveness_weight
+        extensiveness_final = apply_extensiveness_penalty(extensiveness_weight, ref_class, matching_pairs)
+        #psi_score = phi_score * extensiveness_weight
+        psi_score = phi_score * extensiveness_final
         final_score = psi_score
         print('final_score: {0}'.format(final_score))
         permutation_scores.append({
@@ -281,13 +301,15 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
     cnt1 = 0
     final_score = 0
     default_value = 1
-    accepted_pt = ['Mandatory','Exclusive'] #, 'Temporal Sequence Depending'
+    accepted_pt = ['Mandatory','Exclusive','Optional'] #, 'Temporal Sequence Depending'
     orig_ref_class_names = [rec.get('element_type') for rec in ref_class]
     orig_ref_class_uuids = [rec.get('element_uuid') for rec in ref_class]
+    orig_ref_class_props = [rec.get('properties') for rec in ref_class]
     orig_query_class_names = [qe.get('element_type') for qe in query_class if qe['properties']['presence_type']['attributes']['value'] in accepted_pt]
     orig_query_class_uuids = [qe.get('element_uuid') for qe in query_class if qe['properties']['presence_type']['attributes']['value'] in accepted_pt]
     permutations = list(itertools.permutations(range(len(orig_query_class_names)), len(orig_query_class_names)))
     pprint.pprint(permutations)
+    #_breakpoint()
     permutation_scores = []
     for permutation in permutations:
         pprint.pprint(permutation)
@@ -299,6 +321,7 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
         query_class_props = map(lambda i: query_class[i]['properties'], permutation)
         ref_class_names = copy.copy(orig_ref_class_names)
         ref_class_uuids = copy.copy(orig_ref_class_uuids)
+        ref_class_props = copy.copy(orig_ref_class_props)
         ref_class_positions = list(range(len(ref_class_names)))
         #print('permutation: {0}'.format(query_class_names))
         qidx = 0
@@ -316,7 +339,15 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
                     portioning_rc = ref_class[ref_class_pos].get('properties').get('portioning',{'attributes':{'min':100}}).get('attributes').get('min')
                     phi_scores.append(phi_score * portioning_rc/100.0)
                     qe_props = list(query_class_props)[qidx]
-                    matching_pairs.append({'qe_uuid': list(query_class_uuids)[qidx], 'qe_props':qe_props, 're_uuid': ref_class_uuids[phi_index]})
+                    matching_pairs.append(
+                        {
+                            'qe_uuid': list(query_class_uuids)[qidx], 
+                            'qe_type': query_elem,
+                            'qe_props':qe_props, 
+                            're_uuid': ref_class_uuids[phi_index],
+                            're_type': ref_class_names[phi_index],
+                            're_props':ref_class_props[phi_index]
+                        })
                     del ref_class_names[phi_index]
                     del ref_class_uuids[phi_index]
                     del ref_class_positions[phi_index]
@@ -337,21 +368,24 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
         #print('query class: {0}'.format(query_class))
         #print('phi scores: {0}'.format(phi_scores))
         print(phi_scores)
-        phi_score = sum(phi_scores) #mean(phi_scores)
+        phi_score = mean(phi_scores) #mean(phi_scores)
         print('phi score: {0}'.format(phi_score))
         #extensiveness_weight = ed[query_class_cnt][ref_class_cnt]
         print("ed:")
         print(ed)
         extensiveness_weight = ed.get(query_class_cnt,{}).get(ref_class_cnt,1) or 1
         print('extensiveness {0} vs {1} = {2}'.format(ref_class_cnt, query_class_cnt, extensiveness_weight))
-        psi_score = phi_score * extensiveness_weight
+        extensiveness_final = apply_extensiveness_penalty(extensiveness_weight, ref_class, matching_pairs)
+        #psi_score = phi_score * extensiveness_weight
+        psi_score = phi_score * extensiveness_final
         final_score = psi_score
         print('final_score: {0}'.format(final_score))
         permutation_scores.append({
             'query_class_names': query_class_names,
             'permutation': permutation,
             'score': final_score,
-            'matching_pairs': matching_pairs})
+            'matching_pairs': matching_pairs,
+            'partial_qc': query_class})
     return permutation_scores
  
  
@@ -372,11 +406,23 @@ props_mapping = {
     'cover': {
         'LC_Trees': 'LC_TreeCover',
         'LC_Shrubs': 'LC_ShrubCover',
-        'LC_HerbaceousGrowthForms': 'LC_HerbaceousGrowthFormsCover'
+        'LC_HerbaceousGrowthForms': 'LC_HerbaceousGrowthFormsCover',
+        'LC_WoodyGrowthForms': 'LC_WoodyCover',
+        'LC_Graminae': 'LC_GraminaeCover',
+        'LC_Forbs': 'LC_ForbsCover',
+        'LC_Lichen': 'LC_LichenCover',
+        'LC_Algae': 'LC_AlgaeCover',
+        'LC_GrowthForms': 'LC_GrowthFormsCover'
     },
     'height': {
         'LC_Trees': 'LC_TreeHeight',
         'LC_Shrubs': 'LC_ShrubHeight',
+        'LC_HerbaceousGrowthForms': 'LC_HerbaceousGrowthFormsHeight',
+        'LC_WoodyGrowthForms': 'LC_WoodyHeight',
+        'LC_Graminae': 'LC_GraminaeHeight',
+        'LC_Forbs': 'LC_ForbsHeight',
+        'LC_Algae': 'LC_AlgaeHeight',
+        'LC_GrowthForms': 'LC_GrowthFormsHeight'
     }
 }
 
@@ -444,7 +490,7 @@ def compute_phase2_score(ref_class, query_class, names, dd, ed, phase1_meta={}):
                     pprint.pprint('extensiveness-> Query: {0}/ Ref: {1}'.format(qce,rce))
                     pprint.pprint('Property correspondence score: {0}'.format(o_weight))
                     #_breakpoint()
-                    if o_weight<5 and qet!=ret:
+                    if o_weight<0.5 and qet!=ret:
                         # ch 3.2, scenario 1
                         pprint.pprint('ch 3.2, scenario 1 condition: oscore->0.1')
                         o_score=0.1
@@ -522,74 +568,6 @@ extensiveness_dict = None
 for fn in ext_fns:
     extensiveness_dict = load_extensiveness_dict(fn)
 
-def test():
-    '''
-    query_class = [
-        {
-            'element_type':'LC_Trees',
-            'path':'LC_HorizontalPattern/LC_Stratum',
-            'presence_type':'mandatory',
-            'properties': [
-                {
-                    'property_name': 'LC_TreeCover',
-                    'ranged_type': True,
-                    'attributes': {
-                        'min': 5,
-                        'max': 10
-                    }
-                }
-            ]
-        },
-        {
-            'element_type':'LC_HerbaceousGrowthForms',
-            'path': 'LC_HorizontalPattern/LC_Stratum',
-            'presence_type':'mandatory',
-            'properties': [
-                {
-                    'property_name': 'LC_HerbaceousGrowthFormsCover',
-                    'ranged_type': True,
-                    'attributes': {
-                        'min': 40,
-                        'max': 60
-                    }
-                }
-            ]
-        }
-    ]
-    '''
-    weights_mapping_dict = {
-        1: [1.0],
-        2: [0.7, 0.3],
-        3: [0.65, 0.25, 0.1],
-        4: [0.65, 0.25, 0.07, 0.03]
-    }
-    qc = LCCS3Class.objects.filter(active=True).first()
-    query_class = [c['elements'] for c in transcode_lccs3_classes(qc.xml_text)]
-    #_breakpoint()
-    #ref_classes_lccs3_fn = os.path.join(DATA_PATH, 'tests', 'sim_assessment_ref_classes.lccs')
-    #classes = transcode_lccs3_classes(ref_classes_lccs3_fn)
-    legend = LCCS3Legend.objects.filter(active=True).first()
-    classes = transcode_lccs3_classes(legend.xml_text)
-    pprint.pprint(classes)
-    for cl in classes:
-        print('checking class {0} with map_code {1}'.format(cl.get('name'), cl.get('map_code')))
-        ref_class = cl.get('elements')
-        #score_phase1 = compute_phase1_score(ref_class, query_class, element_names, 
-        #                    elements_corr_dict, extensiveness_dict)
-        permutation_scores = compute_phase1_with_multiverse(ref_class, query_class, element_names, 
-                            elements_corr_dict, extensiveness_dict)
-        #permutation_scores = compute_phase1_ml(ref_class, query_class, element_names, 
-        #                    elements_corr_dict, extensiveness_dict)
-        newlist = sorted(permutation_scores,key=itemgetter('score'), reverse=True)
-        score_phase1 = newlist[0]['score']
-        print('score phase1: {0}'.format(score_phase1))
-        ml_query_class = map(lambda i: query_class[i], newlist[0]['permutation'])
-        score_phase2 = compute_phase2_score(ref_class, ml_query_class, prop_names, 
-                            props_corr_dict, extensiveness_dict)
-        print('score phase2: {0}'.format(score_phase2))
-        total_score = score_phase1 * 0.6 + score_phase2 * 0.4
-        print('total score: {0}'.format(total_score))
-
 
 def get_legend_description(doc_legend):
     dd = {'class_codes':[],'names_dict':{}}
@@ -603,6 +581,7 @@ def get_legend_description(doc_legend):
 def perform_assessment(wl, qcm, options = {}):
     dd = {}
     similarity_level = options.get('similarity_level') or 'elements+props'
+    phase1_logic = options.get('phase1_logic') or 'variants'
     doc = etree.fromstring(wl.xml_text)
     #lc_classes = doc.findall('elements/LC_LandCoverClass/map_code', namespaces)
     #dd['working_classes'] = [lc.text for lc in lc_classes]
@@ -625,14 +604,13 @@ def perform_assessment(wl, qcm, options = {}):
             #pprint.pprint(classes)
             scores_kv = {}
             for cl in classes:
-                #print('checking class {0} with map_code {1}'.format(cl.get('name'), cl.get('map_code')))
                 ref_class = cl.get('elements')
-                #score_phase1 = compute_phase1_score(ref_class, query_class, element_names, 
-                #                    elements_corr_dict, extensiveness_dict)
-                permutation_scores = compute_phase1_with_multiverse(ref_class, query_class, element_names, 
+                if phase1_logic=='variants':
+                    permutation_scores = compute_phase1_with_multiverse(ref_class, query_class, element_names, 
                             elements_corr_dict, extensiveness_dict)
-                #permutation_scores = compute_phase1_ml(ref_class, query_class, element_names, 
-                #                    elements_corr_dict, extensiveness_dict)
+                else:
+                    permutation_scores = compute_phase1_ml(ref_class, query_class, element_names, 
+                            elements_corr_dict, extensiveness_dict)
                 newlist = sorted(permutation_scores,key=itemgetter('score'), reverse=True)
                 score_phase1 = newlist[0]['score']
                 matching_pairs = newlist[0]['matching_pairs']

@@ -35,6 +35,16 @@ comparisons_dd = {
         "class1":"coxs-fmp",
         "class2":"seea7",
         "notes":"sal vs mangroves"
+    },
+"coxfp_seea10": {
+        "class1":"coxs-fp",
+        "class2":"seea10",
+        "notes":"Forest Plantations vs Sparsely Natural vegetated areas"
+    },
+"coxfmp_seea7": {
+        "class1":"coxs-fmp",
+        "class2":"seea7",
+        "notes":"Mangrove plantations vs mangroves"
     }
 }
 
@@ -61,7 +71,17 @@ def assess_similarity(case_name):
         c2fn = get_lc_class_fn(entry["class2"])
         c1 = load_lccs_class(c1fn)
         c2 = load_lccs_class(c2fn)
-        res = perform_assessment(c1,c2)
+        res = perform_assessment(c1,c2, {"similarity_level":"basic-elements"})
+        #self.assertEqual(True,True)
+
+def assess_similarity_variants_with_props(case_name):
+    entry = comparisons_dd.get(case_name)
+    if entry:
+        c1fn = get_lc_class_fn(entry["class1"])
+        c2fn = get_lc_class_fn(entry["class2"])
+        c1 = load_lccs_class(c1fn)
+        c2 = load_lccs_class(c2fn)
+        res = perform_assessment(c1,c2, {"similarity_level":"elements+props", "phase1_logic":"variants"})
         #self.assertEqual(True,True)
 
 def load_and_trancode_class(class_name):
@@ -107,7 +127,7 @@ class SimilarityTests(TestCase):
     
     def test_similarity_01(self):
        print("testing with utility functions")
-       assess_similarity("sylhet21_seea7")
+       assess_similarity_variants_with_props("coxfmp_seea7")
     '''
     def test_pt_01(self):
         print("presence_type typology extraction #1 (sylhet14)")
@@ -184,7 +204,7 @@ class SimilarityTests(TestCase):
         permutations = generate_valid_permutations(mg, og, eg, greedy_mode = False)
         pprint.pprint(permutations)
         self.assertEqual(len(permutations),2)
-    '''
+    
     
     def test_permutations_04(self):
         pprint.pprint("- permutations on seea6, greedy_mode = False")
@@ -211,6 +231,5 @@ class SimilarityTests(TestCase):
         pprint.pprint("Permuations: ")
         pprint.pprint(permutations)
         self.assertEqual(len(permutations),8)
-
-
+    '''
     

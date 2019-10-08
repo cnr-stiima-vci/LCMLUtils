@@ -1,0 +1,57 @@
+<LC_Legend xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="1" lccs_sort="0" uuid="852ea230-e00e-11e8-88f7-68f728332aa7" xsi:noNamespaceSchemaLocation="New Legend SEEA.xsd" xsi:type="LC_Legend">
+   <name>New Legend 1</name>
+   <description>Describe the legend</description>
+   <elements>
+    <LC_LandCoverClass id="20" uuid="4619e1c3-e010-11e8-88f7-68f728332aa7" xsi:type="LC_LandCoverClass">
+         <name>Grassland</name>
+         <description>Describe the land cover class</description>
+         <map_code>lcc5</map_code>
+         <elements>
+            <LC_HorizontalPattern id="21" uuid="4619e1c2-e010-11e8-88f7-68f728332aa7" xsi:type="LC_HorizontalPattern">
+               <name>Horizontal Pattern 1</name>
+               <description>Describe the horizontal pattern</description>
+               <elements>
+                  <LC_Stratum id="22" ontop="0" uuid="46180d01-e010-11e8-88f7-68f728332aa7" xsi:type="LC_Stratum">
+                     <name>Stratum 1</name>
+                     <description>Vegetation 1</description>
+                     <elements>
+                        <LC_LandCoverElement id="23" uuid="46180d00-e010-11e8-88f7-68f728332aa7" xsi:type="LC_HerbaceousGrowthForms">
+                           <name>Herbaceous growth forms</name>
+                           <description>Describe a vegetation element of herbaceous growth form type</description>
+                           <elements>
+                              <LC_Characteristic id="24" uuid="27a47286-43af-11de-bbd4-000cf147c442" xsi:type="LC_NaturalOrSeminaturalVegetation">
+                                 <name>Natural Or Seminatural Vegetation</name>
+                                 <description>Describe the natural or seminatural vegetation</description>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Mandatory</presence_type>
+                           <cover max="100.0" min="10.0"/>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Mandatory</presence_type>
+                  </LC_Stratum>
+                  <LC_Stratum id="25" ontop="0" uuid="4619e1c1-e010-11e8-88f7-68f728332aa7" xsi:type="LC_Stratum">
+                     <name>Stratum 2</name>
+                     <description>Vegetation 2</description>
+                     <elements>
+                        <LC_LandCoverElement id="26" uuid="4619e1c0-e010-11e8-88f7-68f728332aa7" xsi:type="LC_WoodyGrowthForms">
+                           <name>Woody Growth Forms</name>
+                           <description>Describe a vegetation element of woody type</description>
+                           <elements>
+                              <LC_Characteristic id="27" uuid="27a47286-43af-11de-bbd4-000cf147c442" xsi:type="LC_NaturalOrSeminaturalVegetation">
+                                 <name>Natural Or Seminatural Vegetation</name>
+                                 <description>Describe the natural or seminatural vegetation</description>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Mandatory</presence_type>
+                           <cover max="10.0" min="1.0"/>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Optional</presence_type>
+                  </LC_Stratum>
+               </elements>
+            </LC_HorizontalPattern>
+         </elements>
+      </LC_LandCoverClass>
+    </elements>
+</LC_Legend>
