@@ -14,6 +14,7 @@ from pdb import set_trace as _breakpoint
 from lxml import etree
 
 comparisons_dd = {
+
 "sylhet22_seea4": {
    		"class1":"sylhet22",
    		"class2":"seea4",
@@ -45,6 +46,16 @@ comparisons_dd = {
         "class1":"coxs-fmp",
         "class2":"seea7",
         "notes":"Mangrove plantations vs mangroves"
+    },
+"coxr_seea6": {
+        "class1":"coxs-r",
+        "class2":"seea6",
+        "notes":"Rivers & Khals vs Tree covered areas"
+    },
+"coxr_seea9": {
+        "class1":"coxs-r",
+        "class2":"seea9",
+        "notes":"Rivers & Khals vs Herbaceous and acquatic vegetations"
     }
 }
 
@@ -71,7 +82,7 @@ def assess_similarity(case_name):
         c2fn = get_lc_class_fn(entry["class2"])
         c1 = load_lccs_class(c1fn)
         c2 = load_lccs_class(c2fn)
-        res = perform_assessment(c1,c2, {"similarity_level":"basic-elements"})
+        res = perform_assessment(c1,c2, {"similarity_level":"basic-elements","phase1_logic":"standard"})
         #self.assertEqual(True,True)
 
 def assess_similarity_variants_with_props(case_name):
@@ -127,7 +138,8 @@ class SimilarityTests(TestCase):
     
     def test_similarity_01(self):
        print("testing with utility functions")
-       assess_similarity_variants_with_props("coxfmp_seea7")
+       #assess_similarity_variants_with_props("coxr_seea6")
+       assess_similarity("coxr_seea6")
     '''
     def test_pt_01(self):
         print("presence_type typology extraction #1 (sylhet14)")

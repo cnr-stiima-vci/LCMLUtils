@@ -1,0 +1,40 @@
+<LC_Legend xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="1" lccs_sort="0" uuid="852ea230-e00e-11e8-88f7-68f728332aa7" xsi:noNamespaceSchemaLocation="New Legend SEEA.xsd" xsi:type="LC_Legend">
+   <name>New Legend 1</name>
+   <description>Describe the legend</description>
+   <elements>
+      <LC_LandCoverClass id="F0" uuid="6a604880-ea7b-11e5-a049-780cb82883be" xsi:type="LC_LandCoverClass">
+         <name>Rivers and Khals</name>
+         <description>Describe the land cover class</description>
+         <map_code>R</map_code>
+         <elements>
+            <LC_HorizontalPattern id="F1" uuid="6a60487f-ea7b-11e5-a049-780cb82883be" xsi:type="LC_HorizontalPattern">
+               <name>Horizontal Pattern 1</name>
+               <description>Describe the horizontal pattern</description>
+               <elements>
+                  <LC_Stratum id="F2" ontop="0" uuid="6a60487e-ea7b-11e5-a049-780cb82883be" xsi:type="LC_Stratum">
+                     <name>Stratum 1</name>
+                     <description>Abiotic surface 1</description>
+                     <elements>
+                        <LC_LandCoverElement id="F3" uuid="6a60487d-ea7b-11e5-a049-780cb82883be" xsi:type="LC_WaterBody">
+                           <name>Water Body</name>
+                           <description>Describe a water body surface element</description>
+                           <elements>
+                              <LC_Characteristic id="F4" uuid="27a2ebe1-43af-11de-bbd4-000cf147c442" xsi:type="LC_Artificiality">
+                                 <name>Artificiality</name>
+                                 <description>Describe the artificiality characteristic</description>
+                                 <type>Natural</type>
+                              </LC_Characteristic>
+                           </elements>
+                           <presence_type>Mandatory</presence_type>
+                           <dynamics>Flowing</dynamics>
+                           <position>Above Surface</position>
+                        </LC_LandCoverElement>
+                     </elements>
+                     <presence_type>Mandatory</presence_type>
+                  </LC_Stratum>
+               </elements>
+            </LC_HorizontalPattern>
+         </elements>
+      </LC_LandCoverClass>
+   </elements>
+</LC_Legend>

@@ -155,7 +155,7 @@ def compute_extensiveness(transcoded_class):
     opt_elems_found = count_props_with_name_and_value_in_transcoded_class(transcoded_class, 'presence_type', 'Optional')
     print("exclusive: {0}; mandatory: {1}; temporal: {2}; optional {3}".format(excl_elems_found, mandatory_elems_found, tempseq_elems_found, opt_elems_found))
     if excl_elems_found>0:
-        extensiveness_length = 1 # + mandatory_elems_found
+        extensiveness_length = 1 + mandatory_elems_found #+ mandatory_elems_found
     else:
         extensiveness_length = mandatory_elems_found
         if tempseq_elems_found:
@@ -166,13 +166,18 @@ def compute_extensiveness(transcoded_class):
     print("extensiveness_length: {0}".format(extensiveness_length))
     return extensiveness_length
 
-def apply_extensiveness_penalty(starting_score, ref_class, matching_pairs):
-    # apply penalty for mandatory elements in the reference class that do not appear in any matching pair
+def apply_extensiveness_penalty(starting_score, query_class, ref_class, matching_pairs):
+    # apply penalty for mandatory elements in the query class that do not appear in any matching pair
     new_score = starting_score
-    mandatory_elems_total = count_props_with_name_and_value_in_transcoded_class(ref_class, 'presence_type', 'Mandatory')
+    mandatory_elems_total = 0
+    mandatory_elems_total += count_props_with_name_and_value_in_transcoded_class(query_class, 'presence_type', 'Mandatory')
+    mandatory_elems_total += count_props_with_name_and_value_in_transcoded_class(ref_class, 'presence_type', 'Mandatory')
     if mandatory_elems_total:
         mandatory_matched = 0
         for mp in matching_pairs:
+            ptval = mp['qe_props']['presence_type']['attributes']['value']
+            if ptval == 'Mandatory':
+                mandatory_matched+=1
             ptval = mp['re_props']['presence_type']['attributes']['value']
             if ptval == 'Mandatory':
                 mandatory_matched+=1
@@ -282,7 +287,7 @@ def compute_phase1_with_multiverse(ref_class, query_class, names, dd, ed):
         print(ed)
         extensiveness_weight = ed.get(query_class_cnt,{}).get(ref_class_cnt,1) or 1
         print('extensiveness {0} vs {1} = {2}'.format(ref_class_cnt, query_class_cnt, extensiveness_weight))
-        extensiveness_final = apply_extensiveness_penalty(extensiveness_weight, ref_class, matching_pairs)
+        extensiveness_final = apply_extensiveness_penalty(extensiveness_weight, query_class, ref_class, matching_pairs)
         #psi_score = phi_score * extensiveness_weight
         psi_score = phi_score * extensiveness_final
         final_score = psi_score
@@ -375,11 +380,13 @@ def compute_phase1_ml(ref_class, query_class, names, dd, ed):
         print(ed)
         extensiveness_weight = ed.get(query_class_cnt,{}).get(ref_class_cnt,1) or 1
         print('extensiveness {0} vs {1} = {2}'.format(ref_class_cnt, query_class_cnt, extensiveness_weight))
-        extensiveness_final = apply_extensiveness_penalty(extensiveness_weight, ref_class, matching_pairs)
+        #_breakpoint()
+        extensiveness_final = apply_extensiveness_penalty(extensiveness_weight, query_class, ref_class, matching_pairs)
         #psi_score = phi_score * extensiveness_weight
         psi_score = phi_score * extensiveness_final
         final_score = psi_score
         print('final_score: {0}'.format(final_score))
+        #_breakpoint()
         permutation_scores.append({
             'query_class_names': query_class_names,
             'permutation': permutation,
@@ -609,6 +616,7 @@ def perform_assessment(wl, qcm, options = {}):
                     permutation_scores = compute_phase1_with_multiverse(ref_class, query_class, element_names, 
                             elements_corr_dict, extensiveness_dict)
                 else:
+                    #_breakpoint()
                     permutation_scores = compute_phase1_ml(ref_class, query_class, element_names, 
                             elements_corr_dict, extensiveness_dict)
                 newlist = sorted(permutation_scores,key=itemgetter('score'), reverse=True)

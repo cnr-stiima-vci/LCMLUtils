@@ -12,6 +12,7 @@ urlpatterns = patterns(
     'lcmlutils.views',
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^$', 'index', name='index'),
+    url(r'^code/', 'code', name='code'),
     url(r'^rest/', include(router.urls)),
     url(r'^services/list-basic-elements', 'list_basic_elements', name='list-basic-elements'),
     url(r'^services/basic-element-schema/(?P<basic_element_name>\w{0,50})', 'basic_element_schema', name='basic-element-schema'),
