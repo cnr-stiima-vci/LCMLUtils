@@ -25,13 +25,28 @@ If you want to try out LCMLUtils, visit the demo at http://www2.lcmlutils.eu
 ^^^^^^^^^^^^
 Dependencies
 ^^^^^^^^^^^^
-Django==1.8.7
-django-bootstrap3==11.0.0
-djangorestframework==2.4.8
-lxml==4.2.5
-requests==2.21.0
-certifi==2018.11.29
-openpyxl==2.5.12
+ * Django==1.8.7
+ * django-bootstrap3==11.0.0
+ * djangorestframework==2.4.8
+ * lxml==4.2.5
+ * requests==2.21.0
+ * certifi==2018.11.29
+ * openpyxl==2.5.12
+
+
+^^^^^^^
+Install
+^^^^^^^
+
+git clone https://github.com/cnr-stiima-vci/LCMLUtils.git
+cd LCMLUtils
+# optional: virtualenv myenv
+# optional: source myenv/bin/activate
+pip3 install -r requirements.txt
+python3 manage.py migrate
+python3 manage.py createsuperuser
+python3 manage.py runserver
+
 
 
 
