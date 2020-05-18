@@ -14,7 +14,7 @@ The library is written in Python, using the Django framework, and offers several
   - Introspection mechanisms of Basic Elements, as defined in the XSD validator
   - Graphical representation of land cover classes.
 
-  The library also implements the similarity assessment described in the article "Object-based similarity assessment using Land Cover Meta Language (LCML): concept, challenges and implementation", oriented to the comparison between different land cover legends.
+The library also implements the similarity assessment described in the article "Object-based similarity assessment using Land Cover Meta Language (LCML): concept, challenges and implementation", oriented to the comparison between different land cover legends.
 
 ^^^^^^^^^^^^^^^^^  
 Try out LCMLUtils
@@ -37,15 +37,18 @@ Dependencies
 ^^^^^^^
 Install
 ^^^^^^^
-
-git clone https://github.com/cnr-stiima-vci/LCMLUtils.git
-cd LCMLUtils
-# optional: virtualenv myenv
-# optional: source myenv/bin/activate
-pip3 install -r requirements.txt
-python3 manage.py migrate
-python3 manage.py createsuperuser
-python3 manage.py runserver
+ * Using virtualenv package is optional but recommended
+ * Install LCMLUtils by typing the following commands (optional commands starts with #) to the terminal::
+   git clone https://github.com/cnr-stiima-vci/LCMLUtils.git
+   cd LCMLUtils
+   # optional: virtualenv myenv
+   # optional: source myenv/bin/activate
+   pip3 install -r requirements.txt
+   python3 manage.py migrate
+   python3 manage.py createsuperuser
+   python3 manage.py runserver
+ * Launch a web browser on http://localhost:8000/
+ 
 
 
 
