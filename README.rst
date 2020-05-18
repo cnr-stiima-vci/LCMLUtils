@@ -39,16 +39,18 @@ Install
 ^^^^^^^
  * Using virtualenv package is optional but recommended
  * Install LCMLUtils by typing the following commands (optional commands starts with #) to the terminal::
-   git clone https://github.com/cnr-stiima-vci/LCMLUtils.git
-   cd LCMLUtils
-   # optional: virtualenv myenv
-   # optional: source myenv/bin/activate
-   pip3 install -r requirements.txt
-   python3 manage.py migrate
-   python3 manage.py createsuperuser
-   python3 manage.py runserver
+
+     git clone https://github.com/cnr-stiima-vci/LCMLUtils.git
+     cd LCMLUtils
+     # optional: virtualenv myenv
+     # optional: source myenv/bin/activate
+     pip3 install -r requirements.txt
+     python3 manage.py migrate
+     python3 manage.py createsuperuser
+     python3 manage.py runserver
+     
  * Launch a web browser on http://localhost:8000/
- 
+
 
 
 
