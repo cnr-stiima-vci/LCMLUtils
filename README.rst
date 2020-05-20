@@ -33,6 +33,14 @@ Dependencies
  * certifi==2018.11.29
  * openpyxl==2.5.12
 
+^^^^^^^^^^^^^^^^^^^^^
+Frontend dependencies
+^^^^^^^^^^^^^^^^^^^^^
+ * Bootstrap3 is used in the frontend (https://getbootstrap.com/docs/3.3/).
+ * Bootstrap-tour (https://github.com/sorich87/bootstrap-tour)
+ * Class graph visualization uses a customized version of d3.js-class-diagram-example (https://github.com/hnakamur/d3.js-class-diagram-example)
+
+
 
 ^^^^^^^
 Install
